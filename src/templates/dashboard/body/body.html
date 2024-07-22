@@ -1,0 +1,18 @@
+{% extends 'dashboard/dashboard.html' %}
+
+{% block title %}
+    dashboard
+{% endblock %}
+
+
+{% block sidebar %}
+    {% include 'dashboard/sidebar/sidebar.html' %}
+{% endblock %}
+
+{% block header %}
+    {% include 'dashboard/header/header.html' %}
+{% endblock %}
+
+{% block body %}
+    {% include 'dashboard/body/autos/autos.html'%}
+{%endblock%}
