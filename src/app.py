@@ -4,12 +4,14 @@ from config import config
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mysqldb import MySQL
+from flask_cors import CORS
 from routes import init_app as init_routes
 
 
-app = Flask(__name__)
 
-csrf = CSRFProtect()
+
+app = Flask(__name__)
+CORS(app)
 
 app.config.from_object(config['development'])
 
@@ -37,5 +39,4 @@ def status_404(error):
     return "<h1>pagina no encontrada</h1>", 404
 
 if __name__ == '__main__':
-    csrf.init_app(app)
     app.run(debug=True)
