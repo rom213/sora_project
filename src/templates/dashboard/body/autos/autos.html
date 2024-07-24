@@ -6,10 +6,10 @@
     </div>
     <div v-if="showModalSection" class="absolute flex items-center justify-center w-full h-full">
         <div class="bg-white w-96 h-44 fixed top-32 p-6">
-            <form @submit.prevent="submitFormSection"  method="post">
+            <form   action="{{url_for('sections.slot') }}"  method="post">
                 <div class="grid">
                     <span>descripcion</span>
-                    <input class="border border-blue-200 h-10 text-xl outline-none pl-2 rounded-md" type="text">
+                    <input name="description" id="description" v-model="formDataSection.description" class="border border-blue-200 h-10 text-xl outline-none pl-2 rounded-md" type="text">
                 </div>
                 <div class="w-full relative flex justify-end h-16">
                     <button type="submit" class="bg-yellow-200  w-28 h-10 absolute  bottom-0 rounded-lg">
