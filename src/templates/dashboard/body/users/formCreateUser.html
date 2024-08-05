@@ -1,0 +1,32 @@
+<div class="z-50">
+    <div v-if="!createUserModal"><button @click="toggleAddUser" class="bg-yellow-100 p-2 rounded-xl">
+        new user
+    </button></div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <br>
+    {%for message in messages %}
+    <div class="flex gap-3 absolute top-32 p-3">
+        <strong>{{message}}</strong>
+        <button class="text-red-500">x</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div v-if="createUserModal" class="fixed min-w-96 bg-white rounded-xl z-10 shadow-lg">
+        <div  class="text-end pr-4 cursor-pointer pt-2 absolute w-full"><span @click="toggleAddUser">X</span></div>
+        <div class="">
+            <form action="{{ url_for('users.registerDashboard') }}" method="post" class="grid p-4">
+                <h1 class="text-2xl">Register</h1>
+                <label for="username">Username:</label>
+                <input class="outline-none border border-black h-8 pl-1 rounded-md" type="text" id="username" name="username" required><br>
+                <label for="password">Password:</label>
+                <input class="outline-none border border-black h-8 pl-1 rounded-md" type="password" id="password" name="password" required><br>
+                <label for="fullname">Full Name:</label>
+                <input class="outline-none border border-black h-8 pl-1 rounded-md" type="text" id="fullname" name="fullname"><br>
+                <div class="h-2"></div>
+                <button class="bg-blue-200 p-1 rounded-sm" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</div>

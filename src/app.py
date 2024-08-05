@@ -40,4 +40,4 @@ def status_404(error):
     return "<h1>Pagina no encontrada</h1>", 404
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5001)
+    app.run(debug=True,port=5001, host='0.0.0.0')

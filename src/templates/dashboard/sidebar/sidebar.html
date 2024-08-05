@@ -4,7 +4,7 @@
     </div>
 
     <div :class="{'flex flex-col gap-4':true, 'pl-4':!showSidebar}">
-        <div class="flex gap-3  text-white">
+        <div class="flex gap-3 text-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -13,7 +13,7 @@
 
             <div v-if="showSidebar">dashboard</div>
         </div>
-        <div class="flex gap-3 text-gray-300">
+        <div class="flex gap-3 cursor-pointer" @click="navigation('/dashboard/allotment')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -21,7 +21,7 @@
             </svg>
             <div v-if="showSidebar">allotment</div>
         </div>
-        <div class="flex gap-3 text-gray-300">
+        <div class="flex gap-3 text-gray-300 cursor-pointer" @click="navigation('/dashboard/users')">
 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-6">

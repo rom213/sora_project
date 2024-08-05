@@ -1,11 +1,13 @@
 from .entities.Section import Section
+from .entities.Slot import Slot
 from . import db
 
 class ModelSection:
     @classmethod
     def allSections(cls):
         try:
-            allSections = Section.query.all()
+            allSections = Section.query.options(db.joinedload(Section.slots)).all()
+            print(allSections)
             return allSections;
         except Exception as exc:
             raise Exception(exc)

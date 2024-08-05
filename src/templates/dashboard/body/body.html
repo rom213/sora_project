@@ -14,5 +14,13 @@
 {% endblock %}
 
 {% block body %}
-    {% include 'dashboard/body/autos/autos.html'%}
+
+    <div v-if="currentPath === '/dashboard/allotment'">
+        {% include 'dashboard/body/autos/autos.html'%}
+    </div>
+
+    <div v-if="currentPath === '/dashboard/users'">
+        {% include 'dashboard/body/users/users.html'%}
+    </div>
+
 {%endblock%}

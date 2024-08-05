@@ -12,4 +12,13 @@ class ModelUser:
         except Exception as exc:
             raise Exception(exc)
         
+    @classmethod
+    def allUsers(cls):
+        try:
+            allUsers = User.query.all()
+            return allUsers;
+        except Exception as exc:
+            raise Exception(exc)
+        
+        
 

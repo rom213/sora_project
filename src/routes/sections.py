@@ -8,15 +8,12 @@ def allslots():
     sections=ModelSection.allSections()
     return render_template('dashboard/body/body.html', sections=sections)
 
+
+
 @section_bp.route('', methods=['GET', 'POST'])
 def slot():
-    print('maria')
     if request.method=='POST':
-        
         data=request.form['description']
-
-
-
-        sections=ModelSection.allSections()
-        return redirect(url_for('dashboard.dashboard', sections=sections))
+        ModelSection.create(data)
+        return redirect(url_for('dashboard.dashboard'))
 

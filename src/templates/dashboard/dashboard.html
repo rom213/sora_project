@@ -54,9 +54,12 @@
             setup() {
                 const showSidebar = ref(true);
                 const showModalSection = ref(false);
+                const showModalSlot=ref(false)
+                const createUserModal=ref(false)
                 const csrf_token = ref("");
                 const inputSim = ref("romario");
-                const formDataSection = ref({ description: 'hola mundo' });
+                const currentPath = ref(window.location.pathname)
+                const formDataSection = ref({ description: '' });
 
                 const submitFormSection = async () => {
                     try {
@@ -71,8 +74,23 @@
                     }
                 };
 
+                const navigation=(path)=>{
+                    window.history.pushState({}, '', path);
+                    currentPath.value = path;
+                }
+
                 const toggleAddSection = () => {
                     showModalSection.value = !showModalSection.value;
+                };
+
+
+                const toggleAddUser = () => {
+                    createUserModal.value = !createUserModal.value;
+                };
+
+                const toggleAddSlot = () => {
+                    showModalSlot.value = !showModalSlot.value;
+                    alert("holas soy yo")
                 };
 
                 const toggleSidebar = () => {
@@ -86,12 +104,27 @@
                     showModalSection,
                     inputSim,
                     submitFormSection,
-                    formDataSection
+                    formDataSection,
+                    showModalSlot,
+                    toggleAddSlot,
+                    currentPath,
+                    navigation,
+                    toggleAddUser,
+                    createUserModal
                 };
             }
         };
 
         Vue.createApp(app).mount('#sidebar-app');
+
+        const users = {
+            setup() {
+                
+                return {
+                };
+            }
+        };
+        Vue.createApp(users).mount('#users-app');
     </script>
 </body>
 

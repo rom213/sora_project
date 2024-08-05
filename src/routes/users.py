@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, login_required
 from models.ModelUser import ModelUser
 from models.entities.User import User
@@ -13,7 +14,7 @@ def register():
         password = request.form['password']
         fullname = request.form['fullname']
 
-        user = User(username=username, password=password, fullname=fullname)
+        user = User(username=username, password=generate_password_hash(password), fullname=fullname)
 
         # Añadir el nuevo usuario a la base de datos
         try:
@@ -23,10 +24,31 @@ def register():
             return redirect(url_for('users.login'))
         except Exception as e:
             db.session.rollback()
-            flash('Error creating user: ' + str(e))
+            flash('Error creating user')
             return render_template('auth/register.html')
 
     return render_template('auth/register.html')
+
+@users_bp.route('/register/dashboard', methods=['POST'])
+def registerDashboard():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        fullname = request.form['fullname']
+
+        user = User(username=username, password=generate_password_hash(password), fullname=fullname)
+
+        # Añadir el nuevo usuario a la base de datos
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('User created successfully!')
+            return redirect(url_for('dashboard.usersdash'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error creating user')
+            return redirect(url_for('dashboard.usersdash'))
+
 
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
