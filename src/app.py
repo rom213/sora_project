@@ -17,7 +17,7 @@ login_manager_app = LoginManager(app)
 
 @login_manager_app.user_loader
 def load_user(id):
-    return ModelUser.get_by_id(mysql, id)
+    return ModelUser.get_by_id(id)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
