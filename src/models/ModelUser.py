@@ -1,4 +1,5 @@
 from .entities.User import User
+from . import db
 
 class ModelUser:
     @classmethod
@@ -9,6 +10,14 @@ class ModelUser:
                 return found_user
             else:
                 return None
+        except Exception as exc:
+            raise Exception(exc)
+        
+    @classmethod
+    def register(cls, user):
+        try:
+            db.session.add(user)
+            db.session.commit()
         except Exception as exc:
             raise Exception(exc)
         
