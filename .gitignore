@@ -1,4 +1,4 @@
 # Ignorar directorios de entorno virtual de Python
-venv/
-env/
+.venv/
+.env/
 node_modules/
