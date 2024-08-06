@@ -43,11 +43,11 @@ def registerDashboard():
             db.session.add(user)
             db.session.commit()
             flash('User created successfully!')
-            return redirect(url_for('dashboard.usersdash'))
+            return redirect(url_for('users.login'))
         except Exception as e:
             db.session.rollback()
             flash('Error creating user')
-            return redirect(url_for('dashboard.usersdash'))
+            return redirect(url_for('users.register'))
 
 
 @users_bp.route('/login', methods=['GET', 'POST'])
