@@ -2,3 +2,19 @@
 .venv/
 .env/
 node_modules/
+
+# Ignorar archivos de caché de Python
+__pycache__/
+*.py[cod]
+
+# Ignorar archivos de caché de Flask
+instance/
+.cache/
+
+# Ignorar archivos de caché de VS Code
+.vscode/
+.history/
+
+# Ignorar archivos de caché de otros frameworks o herramientas
+.venv/
+.idea/
