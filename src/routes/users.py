@@ -59,7 +59,7 @@ def login():
         if logged_user is not None:
             if logged_user.password:
                 login_user(logged_user)
-                return redirect(url_for('dashboard.dashboard'))
+                return redirect(url_for('index'))
             else:
                 flash("password_invalid...")
                 return render_template('auth/login.html')
