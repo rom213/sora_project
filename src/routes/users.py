@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, login_required
 from models.ModelUser import ModelUser
 from models.entities.User import User
 from models import db
+    
 
 users_bp = Blueprint('users', __name__)
 
