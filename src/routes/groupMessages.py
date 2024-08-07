@@ -9,6 +9,7 @@ from models import db
 group_messages_bp = Blueprint('group_messages', __name__)
 
 @group_messages_bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     if request.method == 'POST':
         user_id = request.form['user_id']
@@ -20,42 +21,67 @@ def create():
         try:
             ModelMessageGroup.create(group_message=group_messages)
             flash('Message created successfully!')
-            return redirect(url_for('users.login'))
+            return redirect(url_for('index'))
         except Exception as e:
             db.session.rollback()
             flash('Error creating Message')
-            return render_template('auth/register.html')
+            return render_template('index.html')
 
-    return render_template('auth/register.html')
+    return render_template('index.html')
 
 
-@group_messages_bp.route('/all', methods=['GET', 'POST'])
-def all():
-    
-    if request.method == 'POST':
-
-        Group_message = User(username=request.form['username'], password=request.form['password'])
-        logged_user = ModelUser.login(user)
-
-        if logged_user is not None:
-            if logged_user.password:
-                login_user(logged_user)
-                return redirect(url_for('index'))
-            else:
-                flash("password_invalid...")
-                return render_template('auth/login.html')
-        else:
-            flash("user not found...")
-            return render_template('auth/login.html')
-    else:
-        return render_template('auth/login.html')
-
-@users_bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('users.login'))
-
-@users_bp.route('/home')
+@group_messages_bp.route('/all', methods=['GET'])
 @login_required
-def home():
-    return render_template('home.html')
+def all():
+    try:
+            ModelMessageGroup.all()
+            return render_template('index.html')
+    
+    except Exception as e:
+        flash('Error Retrieving message')
+        return render_template('index.html')
+    
+    
+
+@group_messages_bp.route('/delete', methods=['POST'])
+@login_required
+def delete():
+       if request.method == 'POST':
+        id = request.form['id']     
+
+        # Eliminar el mensaje de la base de datos
+        try:
+                
+            ModelMessageGroup.delete(message_id=id)
+            flash('Message deleted successfully')
+            
+        except Exception as e:
+
+            db.session.rollback()
+            flash('Error deleting message')
+            return redirect(url_for('index'))
+   
+
+
+
+@group_messages_bp.route('/update/<int:id>', methods=['GET','POST'])
+@login_required
+def update():
+        
+        if request.method == 'POST':
+            id = request.form['id']
+            new_message = request.form['message']
+        
+        # Actualizar el mensaje en la base de datos
+        try:
+            ModelMessageGroup.update(message_id=id, new_message= new_message)
+            flash('Message updated successfully')
+            return redirect(url_for('index'))
+        
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating message')
+            return render_template('index.html')
+
+  
+
