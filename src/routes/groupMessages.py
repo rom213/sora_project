@@ -1,38 +1,40 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, logout_user, login_required
-from models.ModelUser import ModelUser
-from models.entities.User import User
+from models.ModelMessageGroup import ModelMessageGroup
+from models.entities.Group_message import Group_message
 from models import db
 
-users_bp = Blueprint('users', __name__)
 
-@users_bp.route('/register', methods=['GET', 'POST'])
-def register():
+group_messages_bp = Blueprint('group_messages', __name__)
+
+@group_messages_bp.route('/create', methods=['GET', 'POST'])
+def create():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        fullname = request.form['fullname']
+        user_id = request.form['user_id']
+        message = request.form['message']
 
-        user = User(username=username, password=generate_password_hash(password), fullname=fullname)
+        group_messages = Group_message(message=message, user_id=user_id)
 
         # Añadir el nuevo usuario a la base de datos
         try:
-            ModelUser.register(user=user)
-            flash('User created successfully!')
+            ModelMessageGroup.create(group_message=group_messages)
+            flash('Message created successfully!')
             return redirect(url_for('users.login'))
         except Exception as e:
             db.session.rollback()
-            flash('Error creating user')
+            flash('Error creating Message')
             return render_template('auth/register.html')
 
     return render_template('auth/register.html')
 
 
-@users_bp.route('/login', methods=['GET', 'POST'])
-def login():
+@group_messages_bp.route('/all', methods=['GET', 'POST'])
+def all():
+    
     if request.method == 'POST':
-        user = User(username=request.form['username'], password=request.form['password'])
+
+        Group_message = User(username=request.form['username'], password=request.form['password'])
         logged_user = ModelUser.login(user)
 
         if logged_user is not None:

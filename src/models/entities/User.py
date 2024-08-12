@@ -8,6 +8,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False)
     rol = db.Column(db.String(20), nullable=True)
     fullname = db.Column(db.String(100), nullable=True)
+    group_messages = db.relationship('Group_message', backref='user', lazy=True)
 
     def __init__(self, username, password, fullname=""):
         self.username = username
