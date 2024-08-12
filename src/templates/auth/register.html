@@ -1,22 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layout.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
+{% block titles %} Register {% endblock %}
 
-<body>
-    <h1>Register</h1>
-    <form action="{{ url_for('users.register') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
+
+{% block body %}
+<div class="bg-black h-screen flex justify-center items-center">
+
+    <form action="{{ url_for('users.register') }}" method="post" class="w-96 bg-gray-600">
+        <div>
+        <h1 class="text-cyan-300 text-2xl">Register</h1>
+    </div>
+        <div class="grid gap-3">
+            <label for="username" class="text-cyan-300 ">Username:</label>
+            <input class=" outline-none pl-2 border border-black h-9 rounded-lg bg-gray-400" type="text" id="username"
+                name="username" required><br>
+        </div>
+        <div>
+            <label for="password" class="text-cyan-300">Password:</label>
+            <input type="password" id="password" name="password" required class="border-black"><br>
+        </div>
+        
         <label for="fullname">Full Name:</label>
         <input type="text" id="fullname" name="fullname"><br>
-        <button type="submit">Register</button>
+        <button type="submit"> TO Register</button>
     </form>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -29,6 +35,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-</body>
+</div>
+{%endblock%}
 
 </html>
