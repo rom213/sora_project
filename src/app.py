@@ -1,11 +1,12 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_socketio import SocketIO, send
 from config import config
 from models import db  # Importa db desde models/__init__.py
 from flask_mysqldb import MySQL
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from models.ModelUser import ModelUser
 from routes import init_app, register_socketio_events
+
 
 app = Flask(__name__)
 app.config.from_object(config['development'])
@@ -14,6 +15,9 @@ app.config.from_object(config['development'])
 db.init_app(app)
 mysql = MySQL(app)
 login_manager_app = LoginManager(app)
+login_manager_app.login_view = 'users.login'
+
+
 
 @login_manager_app.user_loader
 def load_user(id):
@@ -21,7 +25,15 @@ def load_user(id):
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+
 @app.route('/')
+def root():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    else:
+        return redirect(url_for('users.login'))
+
+@app.route('/index')
 def index():
     return render_template("index.html")
 
