@@ -1,34 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'layout.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
+{% block titles %} Register {% endblock %}
 
-<body>
-    <h1>Register</h1>
-    <form action="{{ url_for('users.register') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
-        <label for="fullname">Full Name:</label>
-        <input type="text" id="fullname" name="fullname"><br>
-        <button type="submit">Register</button>
+{% block body %}
+<div class="flex items-center justify-center min-h-screen bg-[#3e9dfc] p-8 overflow-hidden">
+    <form action="{{ url_for('users.register') }}" method="post"
+        class="relative overflow-hidden before:absolute before:left-[-50px] before:top-[-50px] before:rounded-[50%] before:w-[100px] before:h-[100px] before:bg-[#b3d9ff] before:content-[''] after:absolute after:right-[-50px] after:bottom-[-50px] after:rounded-[50%] after:w-[100px] after:h-[100px] after:bg-[#b3d9ff] after:content-[''] w-[500px] h-[520px] rounded-[3%] p-3 shadow-xl bg-white"
+        style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.507);">
+        <div class="flex justify-center items-center mt-[50px] mb-12">
+            <h1 class="text-[#4d94ff] text-5xl font-serif">Register</h1>
+        </div>
+        <div class="grid group">
+            <label for="username"
+                class="text-[#000000a6] pl-10 font-normal hidden group-focus-within:block">Username:</label>
+            <input placeholder="Enter Your Username"
+                class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4 ml-[30px] mr-[30px]" type="text"
+                id="username" name="username" required><br>
+        </div>
+        <div class="grid group">
+            <label for="password"
+                class="text-[#000000a6] pl-10 font-normal hidden group-focus-within:block">Password:</label>
+            <input placeholder="Your Password"
+                class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4 ml-[30px] mr-[30px]" type="password"
+                id="password" name="password" required><br>
+        </div>
+        <div class="grid group">
+            <label for="fullname"
+                class="text-[#000000a6] pl-10 font-normal hidden group-focus-within:block">FullName:</label>
+            <input placeholder="Your FullName"
+                class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4 ml-[30px] mr-[30px]" type="text"
+                id="fullname" name="fullname" required><br>
+        </div>
+        <div class="flex justify-between items-center mt-1">
+
+            <a href="http://127.0.0.1:5001/users/login"
+                class=" px-3 py-2  text-[#000] w-[48%] h-12 mr-[30px] ml-2 flex items-center justify-center hover:scale-[2]"><svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75 3 12m0 0 3.75-3.75M3 12h18"></svg></a>
+            <button type="submit"
+                class="bg-[#50a4f8] px-3 py-2 rounded-lg hover:bg-[#aadbfc] active:scale-95 duration-200 text-white w-[48%] h-12 mr-[30px] ml-[30px]">Create
+                Account</button>
+
+        </div>
+        <div class="mt-6 flex justify-center text-balance ml-[80px]">
+            <p class="text-[#666]">Al registrarte, aceptas nuestros <a href="/terminos" class="text-[#4d94ff]">Términos
+                    y Condiciones</a> y nuestra <a href="/privacidad" class="text-[#4d94ff]">Política de Privacidad</a>.
+            </p>
+        </div>
     </form>
+
     {% with messages = get_flashed_messages() %}
     {% if messages %}
     <br>
-    {%for message in messages %}
-    <div class="alert alert-primary alert-dismissible " role="alert">
-        <strong>{{message}}</strong>
+    {% for message in messages %}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+        <strong>{{ message }}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %}
     {% endif %}
     {% endwith %}
-</body>
+</div>
+{% endblock %}
 
 </html>
