@@ -6,6 +6,8 @@ from flask_mysqldb import MySQL
 from flask_login import LoginManager, current_user
 from models.ModelUser import ModelUser
 from routes import init_app, register_socketio_events
+from models.ModelMessageGroup import ModelMessageGroup
+from models.entities.Group_message import Group_message
 
 
 app = Flask(__name__)
@@ -35,7 +37,8 @@ def root():
 
 @app.route('/index')
 def index():
-    return render_template("index.html")
+    messages=ModelMessageGroup.all()
+    return render_template("index.html", messages=messages)
 
 # Inicializa Blueprints y eventos de SocketIO
 init_app(app, socketio)
