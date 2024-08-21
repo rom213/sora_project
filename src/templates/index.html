@@ -1,26 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js" integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.global.js"></script>
-</head>
-<body>
-    <div id="app">
-        <div id="messages" class="h-72 overflow-hidden">
-            <p v-for="(msg, index) in messages" :key="index" v-html="msg.message">
+{% extends 'layout.html' %}
 
-            </p>
-        </div>
+{% block titles %} Chat App {% endblock %}
+
+{% block body %}
+<div class="">
+    <div class="w-full h-16 bg-yellow-200 fixed z-20">
+        <h2 class="sm:text-3xl">Bienvenido {{ current_user.fullname }}</h2>
         <div id="logoutBtn">
             <a href="{{ url_for('users.logout') }}">Logout</a>
         </div>
-        <h2 class="sm:text-3xl">Bienvenido {{ current_user.fullname }}</h2>
-        <input type="text" v-model="message" placeholder="Messages">
-        <button @click="sendMessage">Send</button>
     </div>
+
+    <div class="bg-[#A5D2FF] w-full h-full absolute  overflow-x-auto p-6 pt-20 pb-8">
+        {% include 'chatgroup/chatGroup.html' %}
+    </div>
+</div>
+
+
+
+
 
     <script>
         const { createApp, ref, onMounted } = Vue;
@@ -29,8 +27,36 @@
             setup() {
                 const socket = ref(null);
                 const messages = ref(JSON.parse('{{ messages|tojson|safe }}')); 
+                let emojis = ref([
+                '😀', '😄', '😁', '😂', '🤣', '😊', '😍', '🥰', '🤭', '🤷',
+                '🙋‍♀️', '🙋', '🙈', '🙉', '🙊', '🐨', '🐯', '🌿', '☘', '🍀',
+                '⚡', '🔥', '💥', '⛈', '🌞', '🎄', '💏', '😡', '😔', '🍉',
+                '🍊', '🏉', '🏊‍♂️', '🏄‍♀️', '🎯', '🪑', '👩‍🦯', '🎉', '🎂', '🎃',
+                '🕯', '🎁', '🎈', '🍪', '🍩', '🍻', '🥂', '🥳', '🤖', '👾',
+                '🤡', '👻', '👽', '💀', '🎃', '🎨', '🎤', '🎧', '🎷', '🎸',
+                '🎺', '🎻', '🥁', '🎮', '🖥', '💻', '📱', '📷', '📺', '⏰',
+                '🛏', '🚪', '🗝', '🛋', '🚽', '🚿', '🛁', '🛒', '🚲', '🚕',
+                '🚌', '🚎', '🚓', '🚑', '🚒', '🚜', '🚛', '🚍', '🚂', '🚀',
+                '🎢', '🎡', '🎠', '🎪', '🎬', '🎭', '🖼', '🎳', '🎽', '🏅',
+                '🏆', '🥇', '🥈', '🥉', '⚽', '🏀', '🏈', '🎾', '🏐', '🏓',
+                '🏸', '🏒', '🏑', '🥅', '⛳', '🎣', '🤿', '🎽', '🏹', '🧑‍🎤',
+                '🧑‍🍳', '🧑‍🔬', '🧑‍🚀', '👶', '👨‍🍼', '🧓', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️',
+                '🧙‍♂️', '🧙‍♀️', '🧚‍♂️', '🧚‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧛‍♂️', '🧛‍♀️',
+                '🧟‍♂️', '🧟‍♀️', '🧞'
+            ]);
                  // Cargar mensajes desde el servidor
                 const message = ref('');
+
+                const modalEmojis=ref(false);
+
+                const toogleEmojis=()=>{
+                    modalEmojis.value=!modalEmojis.value
+                }
+
+                const adEmoji=(value)=>{
+                    message.value=message.value.concat(value)
+                }
+                
                 const sendMessage = () => {
                     if (message.value) {
                         socket.value.emit('message', message.value);
@@ -41,7 +67,7 @@
                 onMounted(() => {
                     socket.value = io.connect();
                     socket.value.on('message', (data) => {
-                        messages.value.push(data);
+                        messages.value.push(data[data.length-1]);
                     });
                 });
 
@@ -49,9 +75,13 @@
                     messages,
                     message,
                     sendMessage,
+                    emojis,
+                    toogleEmojis,
+                    modalEmojis,
+                    adEmoji
                 };
             }
         }).mount('#app');
     </script>
-</body>
-</html>
+{% endblock %}
+

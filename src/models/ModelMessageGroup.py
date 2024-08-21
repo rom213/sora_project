@@ -49,7 +49,8 @@ class ModelMessageGroup:
             if Group_message:
                 db.session.add(group_message);
                 db.session.commit();
-                return True;
+                data=ModelMessageGroup.all()
+                return data;
             
             return False;
         except Exception as exc:

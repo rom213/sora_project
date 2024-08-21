@@ -18,8 +18,8 @@ def register_socketio_events(socketio_instance):
         if current_user.is_authenticated:
             user_id = current_user.id
             group_messages = Group_message(message=message, user_id=user_id)
-            ModelMessageGroup.create(group_message=group_messages)
+            messages=ModelMessageGroup.create(group_message=group_messages)
             if message != "User connected!":
-                emit('message', message, broadcast=True)
+                emit('message', messages, broadcast=True)
         else:
             print("Anonymous user sent a message")
