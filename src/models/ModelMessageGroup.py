@@ -29,10 +29,10 @@ class ModelMessageGroup:
     @classmethod
     def update(cls, message_id, new_message):
         try:
-            Group_message = db.session.query(Group_message).filter_by(id=message_id).first()
-            if Group_message:
-                Group_message.message = new_message
-                Group_message.update_at = datetime.utcnow
+            Group_messages = db.session.query(Group_message).filter_by(id=message_id).first()
+            if Group_messages:
+                Group_messages.message = new_message
+                Group_messages.update_at = datetime.utcnow()
                 db.session.commit()
                 return True
             

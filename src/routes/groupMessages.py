@@ -8,7 +8,7 @@ from models import db
 
 group_messages_bp = Blueprint('group_messages', __name__)
 
-@group_messages_bp.route('/create', methods=['GET', 'POST'])
+@group_messages_bp.route('/create', methods=['POST'])
 @login_required
 def create():
     if request.method == 'POST':
@@ -64,7 +64,7 @@ def delete():
 
 
 
-@group_messages_bp.route('/update/<int:id>', methods=['GET','POST'])
+@group_messages_bp.route('/update', methods=['POST'])
 @login_required
 def update():
         

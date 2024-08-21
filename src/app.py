@@ -3,7 +3,7 @@ from flask_socketio import SocketIO, send
 from config import config
 from models import db  # Importa db desde models/__init__.py
 from flask_mysqldb import MySQL
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, login_required
 from models.ModelUser import ModelUser
 from routes import init_app, register_socketio_events
 from models.ModelMessageGroup import ModelMessageGroup
@@ -36,6 +36,7 @@ def root():
         return redirect(url_for('users.login'))
 
 @app.route('/index')
+@login_required
 def index():
     messages=ModelMessageGroup.all()
     return render_template("index.html", messages=messages)
