@@ -1,3 +1,5 @@
+import random
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from .. import db
@@ -8,17 +10,28 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False)
     rol = db.Column(db.String(20), nullable=True)
     fullname = db.Column(db.String(100), nullable=True)
+    color = db.Column(db.String(7), nullable=False, default="#FFFFFF")
     group_messages = db.relationship('Group_message', backref='user', lazy=True)
+
+
+    def generate_pastel_color(self):
+        red = (random.randint(0, 255) + 255) // 2  # Mezcla el componente rojo con blanco.
+        green = (random.randint(0, 255) + 255) // 2  # Mezcla el componente verde con blanco.
+        blue = (random.randint(0, 255) + 255) // 2  # Mezcla el componente azul con blanco.
+        return "#{:02x}{:02x}{:02x}".format(red, green, blue)  # Genera el color pastel en formato hexadecimal.
+
 
     def __init__(self, username, password, fullname=""):
         self.username = username
         self.password = password
         self.fullname = fullname
-
+        self.color = self.generate_pastel_color()  # Asigna un color pastel al usuario.
+    
+    
     @classmethod
     def check_password(cls, hashed_password, password):
         return check_password_hash(hashed_password, password)
-    
+
     @classmethod
     def get_by_id(cls, id):
         try:
