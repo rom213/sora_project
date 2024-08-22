@@ -4,14 +4,13 @@
 
 {% block body %}
 <div class="">
-    <div class="w-full h-16 bg-yellow-200 fixed z-20">
-        <h2 class="sm:text-3xl">Bienvenido {{ current_user.fullname }}</h2>
-        <div id="logoutBtn">
-            <a href="{{ url_for('users.logout') }}">Logout</a>
-        </div>
-    </div>
 
-    <div class="bg-[#A5D2FF] w-full h-full absolute  overflow-x-auto p-6 pt-20 pb-8">
+    <div>
+        {% include 'header/header.html' %}
+    </div>
+    
+
+    <div class="bg-[#A5D2FF] w-full h-full absolute  overflow-x-auto p-6 pt-20 pb-8 mt-9">
         {% include 'chatgroup/chatGroup.html' %}
     </div>
 </div>
