@@ -1,0 +1,67 @@
+{% extends 'layout.html' %} {% block titles %} SORA {% endblock %} {% block body
+%}
+<div class="w-full h-24 bg-[#6f8cde] fixed z-20">
+  <div class="flex flex-row justify-end pt-5 space-x-4 pr-36">
+    <h2 class="sm:text-3xl uppercase font-bold text-white text-center pt-2">
+      {{ current_user.fullname }}
+    </h2>
+    <div
+      class="bg-yellow-300 flex items-center justify-center rounded-full w-12 h-12"
+    >
+      <span class="text-white font- font-extrabold text-xl"
+        >{{ current_user.first_letter() }}</span
+      >
+    </div>
+  </div>
+
+  <div
+    class="sm:text-2xl flex justify-start pl-2 space-x-44 font-bold gap-1 -mt-12"
+  >
+    <button
+      id="btn1"
+      onclick="toggleActive(this)"
+      class="text-center text-white p-2"
+    >
+      Chat General
+    </button>
+    <button
+      id="btn2"
+      onclick="toggleActive(this)"
+      class="text-center text-white p-2"
+    >
+      Chats
+    </button>
+    <button
+      id="btn3"
+      onclick="toggleActive(this)"
+      class="text-center text-white p-2"
+    >
+      Psicologia
+    </button>
+  </div>
+
+  <div
+    id="logoutBtn"
+    class="flex items-center space-x-2 justify-end pr-4 -mt-3"
+  >
+    <a
+      href="{{ url_for('users.logout') }}"
+      class="flex items-center px-2 py-0.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-300"
+    >
+      <i class="fas fa-sign-out-alt mr-1"></i>Logout</a
+    >
+  </div>
+</div>
+
+<script>
+  function toggleActive(element) {
+    // Remover la clase de fondo y redondeo de todos los botones
+    document.querySelectorAll(".sm\\:text-2xl button").forEach((btn) => {
+      btn.classList.remove("bg-[#0f45dc]", "rounded-xl");
+    });
+
+    // Agregar la clase de fondo y redondeo al botón clicado
+    element.classList.add("bg-[#0f45dc]", "rounded-xl", "pl-5", "pr-5");
+  }
+</script>
+{% endblock %}

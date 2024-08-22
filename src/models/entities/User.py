@@ -31,3 +31,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+    
+
+    def first_letter(self):
+        return self.fullname[0].upper() if self.fullname else None
