@@ -48,4 +48,4 @@ register_socketio_events(socketio)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Crea las tablas si no existen
-    socketio.run(app, host='0.0.0.0', port=5001, debug=True)
+    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=5000)
