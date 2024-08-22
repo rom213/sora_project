@@ -5,9 +5,10 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     MYSQL_HOST = 'localhost'
-    MYSQL_USER = 'root'
+    MYSQL_USER = 'romario'
     MYSQL_PASSWORD = '1234567'
     MYSQL_DB = 'chat'
+
     SQLALCHEMY_DATABASE_URI = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}?charset=utf8mb4'
 
 
