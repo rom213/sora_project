@@ -13,9 +13,11 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        fullname = request.form['fullname']
+        name = request.form['name']
+        lastname = request.form['lastname']
 
-        user = User(username=username, password=generate_password_hash(password), fullname=fullname)
+
+        user = User(username=username, password=generate_password_hash(password), name=name,lastname=lastname)
 
         # Añadir el nuevo usuario a la base de datos
         try:
