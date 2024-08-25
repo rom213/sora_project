@@ -3,16 +3,27 @@
 {% block titles %} Chat App {% endblock %}
 
 {% block body %}
-<div class="">
+<div id="app" class="">
 
     <div>
         {% include 'header/header.html' %}
     </div>
     
 
-    <div class="bg-[#A5D2FF] w-full h-full absolute  overflow-x-auto p-6 pt-20 pb-8 mt-9">
-        {% include 'chatgroup/chatGroup.html' %}
+    <div v-if="navi === 'group'" class="bg-[#A5D2FF] w-full h-screen absolute pt-[70px]">
+        <div class="bg-red-100 overflow-x-auto px-8 h-full relative pb-2 rounded-lg z-40 pt-2">
+            {% include 'chatgroup/chatGroup.html' %}
+        </div>
     </div>
+
+
+    <div v-if="navi === 'psi'" class="bg-[#A5D2FF] w-full h-screen absolute pt-[70px]">
+        <div class="bg-red-100 overflow-x-auto px-8 h-full relative pb-2 rounded-lg z-40 pt-2">
+            {% include 'psico/psico.html' %}
+        </div>
+    </div>
+    
+    
 </div>
 
 
@@ -43,8 +54,10 @@
                 '🧙‍♂️', '🧙‍♀️', '🧚‍♂️', '🧚‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧛‍♂️', '🧛‍♀️',
                 '🧟‍♂️', '🧟‍♀️', '🧞'
             ]);
-                 // Cargar mensajes desde el servidor
+
                 const message = ref('');
+                const navi = ref('group');
+
 
                 const modalEmojis=ref(false);
 
@@ -52,9 +65,17 @@
                     modalEmojis.value=!modalEmojis.value
                 }
 
+                const toogleNvigate=(val)=>{
+                    navi.value=val
+                }
+
+
+
                 const adEmoji=(value)=>{
                     message.value=message.value.concat(value)
                 }
+
+
                 
                 const sendMessage = () => {
                     if (message.value) {
@@ -77,7 +98,9 @@
                     emojis,
                     toogleEmojis,
                     modalEmojis,
-                    adEmoji
+                    adEmoji,
+                    navi,
+                    toogleNvigate
                 };
             }
         }).mount('#app');
