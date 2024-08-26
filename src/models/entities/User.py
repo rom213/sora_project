@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
         return "#{:02x}{:02x}{:02x}".format(red, green, blue)  # Genera el color pastel en formato hexadecimal.
 
 
-    def __init__(self, username, password,lastname, name=""):
+    def __init__(self, username, password,name="",lastname=""):
         self.username = username
         self.password = password
         self.name = name
@@ -50,4 +50,7 @@ class User(UserMixin, db.Model):
     
 
     def first_letter(self):
-        return self.fullname[0].upper() if self.fullname else None
+        return self.name[0].upper() if self.name else None
+    
+    def first_letter_of_lastname(self):
+        return self.lastname[0].upper() if self.lastname else None
