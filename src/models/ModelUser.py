@@ -29,6 +29,25 @@ class ModelUser:
         except Exception as exc:
             raise Exception(exc)
         
+    @classmethod
+    def allPsychologyUsers(cls):
+        try:
+            all_users = User.query.filter_by(rol='psi').all()
+            result = []
+            for user in all_users:
+                result.append({
+                    'id': user.id,
+                    'username': user.username,
+                    'fullname': user.fullname,
+                    'user_id': user.id,
+                    'rol':user.rol,
+                    'color':user.color
+                })
+            return result
+
+        except Exception as exc:
+            raise Exception(exc)
+        
         
     @classmethod
     def get_by_id(cls, id):

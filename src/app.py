@@ -7,6 +7,7 @@ from flask_login import LoginManager, current_user, login_required
 from models.ModelUser import ModelUser
 from routes import init_app, register_socketio_events
 from models.ModelMessageGroup import ModelMessageGroup
+from models.ModelUser import ModelUser
 from models.entities.Group_message import Group_message
 
 
@@ -38,8 +39,9 @@ def root():
 @app.route('/index')
 @login_required
 def index():
+    allPsy=ModelUser.allPsychologyUsers()
     messages=ModelMessageGroup.all()
-    return render_template("index.html", messages=messages)
+    return render_template("index.html", messages=messages, psychology=allPsy)
 
 # Inicializa Blueprints y eventos de SocketIO
 init_app(app, socketio)

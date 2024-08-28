@@ -37,6 +37,8 @@
             setup() {
                 const socket = ref(null);
                 const messages = ref(JSON.parse('{{ messages|tojson|safe }}')); 
+                const psych=ref(JSON.parse('{{ psychology|tojson|safe }}'))
+                console.log(psych)
                 let emojis = ref([
                 '😀', '😄', '😁', '😂', '🤣', '😊', '😍', '🥰', '🤭', '🤷',
                 '🙋‍♀️', '🙋', '🙈', '🙉', '🙊', '🐨', '🐯', '🌿', '☘', '🍀',

@@ -4,7 +4,7 @@
     class="text-xl font-bold  h-full flex items-center"
   >
     <button
-      class="text-center text-white w-48 h-ful"
+    :class="['text-center text-white w-48 h-full', {'bg-red-100': navi==='group'}]"
       @click="toogleNvigate('group')"
     >
       Chat General
@@ -15,7 +15,7 @@
       Chats
     </button>
     <button
-      class="text-center text-white p-2  w-48 h-full"
+    :class="['text-center text-white w-48 h-full', {'bg-red-100': navi==='psi'}]"
       @click="toogleNvigate('psi')"
     >
       Psicologia

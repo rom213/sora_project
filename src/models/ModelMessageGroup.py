@@ -8,16 +8,15 @@ class ModelMessageGroup:
     @classmethod
     def all(cls):
         try:
-            # Asumiendo que `Group_message` tiene los campos `id`, `content`, y `user_id`
+            
             messages = db.session.query(Group_message, User).join(User, Group_message.user_id == User.id).order_by(asc(Group_message.created_at)).all()
             
-            # Convertir los resultados en un formato de lista de diccionarios
             result = []
             for message, user in messages:
                 result.append({
                     'id': message.id,
                     'message': message.message,
-                    'username': user.username,  # Suponiendo que User tiene un campo `username`
+                    'username': user.username,
                     'fullname': user.fullname,
                     'user_id': user.id,
                     'rol':user.rol
