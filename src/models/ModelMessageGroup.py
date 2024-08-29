@@ -17,7 +17,7 @@ class ModelMessageGroup:
                     'id': message.id,
                     'message': message.message,
                     'username': user.username,
-                    'fullname': user.fullname,
+                    'name': user.name,
                     'user_id': user.id,
                     'rol':user.rol
                 })

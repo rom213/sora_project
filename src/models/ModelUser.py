@@ -35,13 +35,18 @@ class ModelUser:
             all_users = User.query.filter_by(rol='psi').all()
             result = []
             for user in all_users:
+                letters=user.first_letter()+user.first_letter_of_lastname()
+                fullname=user.name + ' ' +  user.lastname
                 result.append({
                     'id': user.id,
                     'username': user.username,
-                    'fullname': user.fullname,
+                    'fullname': fullname,
+                    'name': user.name,
+                    'lastname': user.lastname,
                     'user_id': user.id,
                     'rol':user.rol,
-                    'color':user.color
+                    'color':user.color,
+                    'letter': letters
                 })
             return result
 

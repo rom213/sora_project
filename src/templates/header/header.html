@@ -4,18 +4,18 @@
     class="text-xl font-bold  h-full flex items-center"
   >
     <button
-    :class="['text-center text-white w-48 h-full', {'bg-red-100': navi==='group'}]"
+    :class="['text-center text-white w-48 h-full cursor-pointer', {'bg-red-100': navi==='group'}]"
       @click="toogleNvigate('group')"
     >
       Chat General
     </button>
     <button
-      class="text-center text-white p-2  w-48 h-full"
+      class="text-center text-white p-2  w-48 h-full cursor-pointer"
     >
       Chats
     </button>
     <button
-    :class="['text-center text-white w-48 h-full', {'bg-red-100': navi==='psi'}]"
+    :class="['text-center text-white w-48 h-full cursor-pointer', {'bg-red-100': navi==='psi'}]"
       @click="toogleNvigate('psi')"
     >
       Psicologia
@@ -24,7 +24,7 @@
 
   <div class="flex gap-6">
     <h2 class="sm:text-xl uppercase font-semibold text-white text-center pt-2">
-      {{ current_user.fullname }}
+      {{ current_user.name }} {{ current_user.lastname }} 
     </h2>
     <div
       class="bg-[{{current_user.color}}] flex items-center justify-center rounded-full w-12 h-12"
