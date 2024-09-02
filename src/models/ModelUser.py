@@ -1,5 +1,9 @@
 from .entities.User import User
+from .entities.Conexion import Conexion
+from .entities.Message import Message
+from sqlalchemy import asc, desc
 from . import db
+from flask_login import current_user
 
 class ModelUser:
     @classmethod
@@ -33,20 +37,50 @@ class ModelUser:
     def allPsychologyUsers(cls):
         try:
             all_users = User.query.filter_by(rol='psi').all()
+            user_id = current_user.id
             result = []
             for user in all_users:
                 letters=user.first_letter()+user.first_letter_of_lastname()
                 fullname=user.name + ' ' +  user.lastname
+
+                conexion = db.session.query(Conexion).filter(
+                    Conexion.user_id2 == user.id,
+                    Conexion.user_id == user_id
+                ).first()
+                
+                mesagges_tem=[]
+                mesagges=[]
+
+                if conexion:
+                    mesagges_tem=db.session.query(Message).filter(Message.conexion_id==conexion.id).order_by(asc(Message.id)).all()
+
+                    for message in mesagges_tem:
+                        mesagges.append({
+                            'id': message.id,
+                            'message': message.message,
+                            'user_id': message.user_id,
+                            'conexion_id':message.conexion_id,
+                        })
+                
+
+                
+                conexion_id= None
+                if conexion:
+                    conexion_id=conexion.id
+
+
                 result.append({
                     'id': user.id,
                     'username': user.username,
+                    'conexion_id': conexion_id,
                     'fullname': fullname,
                     'name': user.name,
                     'lastname': user.lastname,
                     'user_id': user.id,
                     'rol':user.rol,
                     'color':user.color,
-                    'letter': letters
+                    'letter': letters,
+                    'messages':mesagges
                 })
             return result
 

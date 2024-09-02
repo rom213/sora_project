@@ -17,8 +17,8 @@
     </div>
 
 
-    <div v-if="navi === 'psi'" class="bg-[#A5D2FF] w-full h-screen absolute pt-[70px]">
-        <div class="bg-red-100 overflow-x-auto px-8 h-full relative pb-2 rounded-lg z-40 pt-2">
+    <div v-if="navi === 'psi'" class="bg-[#A5D2FF] w-full h-screen pt-[80px]">
+        <div class="bg-red-100  px-8 h-full pb-2 rounded-lg z-40 pt-2">
             {% include 'psico/psico.html' %}
         </div>
     </div>
@@ -38,9 +38,15 @@
                 const socket = ref(null);
                 const messages = ref(JSON.parse('{{ messages|tojson|safe }}')); 
                 const psych=ref(JSON.parse('{{ psychology|tojson|safe }}'))
+
+
                 const psychologyMessage=ref(null)
                 const message = ref('');
                 const navi = ref('psi');
+
+                console.log(psych)
+
+                let indexMessagePys=null
 
 
 
@@ -63,12 +69,9 @@
             ]);
 
 
-
-
                 toogleNaviChatPsyc=(index)=>{
-                    
+                    indexMessagePys=index
                     psychologyMessage.value=psych.value[index];
-
                 }
 
 
@@ -90,9 +93,15 @@
 
 
                 
-                const sendMessage = () => {
-                    if (message.value) {
+                const sendMessage = (user) => {
+                    if (message.value && navi.value==='group') {
                         socket.value.emit('message', message.value);
+                        message.value = '';
+                    }
+
+                    if (message.value && navi.value==='psi') {
+                        data={message:message.value, conexion_id:user.conexion_id, user_id:user.id}
+                        socket.value.emit('message_psi', data)
                         message.value = '';
                     }
                 };
@@ -103,6 +112,13 @@
                     socket.value = io.connect();
                     socket.value.on('message', (data) => {
                         messages.value.push(data[data.length-1]);
+                    });
+
+                    socket.value.on('message_psi', (data) => {
+                        if (indexMessagePys !== null) {
+                            psychologyMessage.value=data[indexMessagePys]
+                        }
+                        psych.value=data
                     });
                 });
 

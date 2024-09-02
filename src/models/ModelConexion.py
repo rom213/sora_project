@@ -1,5 +1,7 @@
 from .entities.Conexion import Conexion
 from sqlalchemy.exc import SQLAlchemyError
+from flask_login import current_user
+
 from . import db
 
 class ModelConexion:
@@ -8,6 +10,19 @@ class ModelConexion:
         try:
             all_conexion_users = Conexion.query.filter_by(user_id=id_user).all()
             return all_conexion_users if all_conexion_users else None
+        except Exception as exc:
+            raise Exception(exc)
+        
+    @classmethod
+    def create(cls, user_id2):
+        try:
+            user_id= current_user.id
+            conexion = Conexion(user_id2=user_id2, user_id=user_id)
+            db.session.add(conexion)
+            db.session.commit()
+
+            return conexion
+
         except Exception as exc:
             raise Exception(exc)
         

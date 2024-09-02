@@ -1,6 +1,10 @@
 from .entities.User import User
 from .entities.Conexion import Conexion
 from .entities.Message import Message
+from .ModelUser import ModelUser
+
+from flask_login import current_user
+
 from . import db
 
 
@@ -58,6 +62,21 @@ class ModelMessage:
                 return True
             
             return False
+            
+        except Exception as e:
+            raise e
+
+    @classmethod
+    def create(cls, message, conexion_id):
+        try:
+            user_id = current_user.id
+
+            message = Message(message=message, user_id=user_id, conexion_id=conexion_id)
+            
+            db.session.add(message)
+            db.session.commit()
+            
+            return ModelUser.allPsychologyUsers()
             
         except Exception as e:
             raise e
