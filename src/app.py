@@ -29,6 +29,7 @@ def load_user(id):
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 
+
 @app.route('/')
 def root():
     if current_user.is_authenticated:
@@ -41,7 +42,17 @@ def root():
 def index():
     allPsy=ModelUser.allPsychologyUsers()
     messages=ModelMessageGroup.all()
-    return render_template("index.html", messages=messages, psychology=allPsy)
+    userLogin = {
+                "id": current_user.id,
+                "username": current_user.username,
+                "rol": current_user.rol,
+                "name": current_user.name,
+                "lastname": current_user.lastname,
+                "color": current_user.color,
+                "avatar": current_user.avatar,
+                "letters":current_user.init_letters()
+            }
+    return render_template("index.html", messages=messages, psychology=allPsy, userLogin=userLogin)
 
 # Inicializa Blueprints y eventos de SocketIO
 init_app(app, socketio)
@@ -50,4 +61,4 @@ register_socketio_events(socketio)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Crea las tablas si no existen
-    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5006, debug=True)

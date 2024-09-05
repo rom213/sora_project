@@ -12,14 +12,20 @@ class ModelMessageGroup:
             messages = db.session.query(Group_message, User).join(User, Group_message.user_id == User.id).order_by(asc(Group_message.created_at)).all()
             
             result = []
+
             for message, user in messages:
+                
+                letters= user.first_letter() + user.first_letter_of_lastname()
+
                 result.append({
                     'id': message.id,
                     'message': message.message,
                     'username': user.username,
                     'name': user.name,
                     'user_id': user.id,
-                    'rol':user.rol
+                    'rol':user.rol,
+                    'letters':letters,
+                    'color':user.color
                 })
             return result
         except Exception as exc:

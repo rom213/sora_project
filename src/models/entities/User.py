@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     color = db.Column(db.String(7), nullable=False, default="#FFFFFF")
 
     group_messages = db.relationship('Group_message', backref='user', lazy=True)
+    avatar = db.Column(db.String(100), nullable=True)
 
 
     def generate_pastel_color(self):
@@ -23,12 +24,17 @@ class User(UserMixin, db.Model):
         return "#{:02x}{:02x}{:02x}".format(red, green, blue)  # Genera el color pastel en formato hexadecimal.
 
 
-    def __init__(self, username, password,name="",lastname=""):
+    def __init__(self, username, password,name="",lastname="", avatar=""):
+
         self.username = username
         self.password = password
         self.name = name
         self.lastname = lastname
         self.color = self.generate_pastel_color()  # Asigna un color pastel al usuario.
+        self.avatar = avatar
+    
+
+
     
     
     @classmethod
@@ -54,3 +60,8 @@ class User(UserMixin, db.Model):
     
     def first_letter_of_lastname(self):
         return self.lastname[0].upper() if self.lastname else None
+    
+    def init_letters(self):
+        first = self.first_letter()
+        last = self.first_letter_of_lastname()
+        return f"{first}{last}" if first and last else None

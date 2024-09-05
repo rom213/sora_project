@@ -1,51 +1,49 @@
-<div  class="h-full bg-white px-6 pb-6 rounded-xl relative w-full">
-    <div id="messages" class="h-full overflow-auto relative ">
-        
-        <div class="px-7 grid grid-cols-1 gap-3 pt-2 pb-4">
-            <div 
-                v-for="(msg, index) in messages" 
-                :key="index" 
-                :class="[
-                    'flex gap-4 max-w-[700px]',
+<div class="h-full bg-white px-2 md:px-6 pb-6 rounded-xl relative w-full">
+    <div id="messages" class="h-full overflow-auto scrollbar-custom relative ">
+
+        <div class="px-2 md:px-7 grid grid-cols-1 gap-3 pt-2 pb-4">
+            <div v-for="(msg, index) in messages" :key="index" :class="[
+                    'flex gap-2 md:gap-4 max-w-[700px]',
                     {{current_user.id}} === msg.user_id ? 'justify-self-end' : 'justify-self-start'
-                ]"
-            >
-                <div v-if="!({{current_user.id}} === msg.user_id)" class="rounded-full h-12 w-12 flex-shrink-0 bg-red-200 flex items-center justify-center">
-                    <div class="text-2xl font-bold text-white">RA</div>
+                ]">
+                <div v-if="!({{current_user.id}} === msg.user_id)"
+                    class="rounded-full h-12 w-12 md:h-16 md:w-16 flex-shrink-0 bg-red-200 flex items-center justify-center"
+                    :style="{backgroundColor:msg.color}">
+                    <div class="md:text-3xl font-bold text-white" v-html="msg.letters"></div>
                 </div>
-                <div>
-                    
+                <div> 
+
                 </div>
                 <div class="px-4 bg-[#CEE8FF] rounded-lg flex items-center">
-                    <p 
-                        v-html="msg.message" 
-                        class="text-xl"
-                    ></p>
+                    <p v-html="msg.message" class="md:text-3xl"></p>
                 </div>
-                <div v-if="{{current_user.id}} === msg.user_id" class="rounded-full h-12 w-12 flex-shrink-0 bg-red-200 flex items-center justify-center">
-                    <div class="text-2xl font-bold text-white">RA</div>
+                <div v-if="{{current_user.id}} === msg.user_id"
+                    class="rounded-full h-12 w-12 md:h-16 md:w-16  flex-shrink-0 bg-red-200 flex items-center justify-center"
+                    :style="{backgroundColor:msg.color}"
+                    >
+                    <div class="md:text-3xl font-bold text-white" v-html="msg.letters"></div>
                 </div>
             </div>
         </div>
-        
-        
-       
+
+
+
 
 
         <form action="" @submit.prevent="sendMessage"
-            :class="['flex flex-col sticky bottom-0  bg-[#E9E9E9] items-center gap-6 pl-6 pr-6 rounded-md',{'top-full':messages.length<7}]">
-            
-            <div v-if="modalEmojis" class="grid grid-cols-12 gap-12 overflow-auto h-44 pt-3">
+            :class="['flex flex-col sticky bottom-0  bg-[#E9E9E9] items-center md:gap-6 md:pl-6 md:pr-6 rounded-md',{'top-full':messages.length<7}]">
+
+            <div v-if="modalEmojis" class="grid grid-cols-8 md:grid-cols-12 gap-4 md:gap-12 overflow-auto h-44 pt-3">
                 <span v-for="(emoji, index) in emojis" :key="index" @click="adEmoji(emoji)"
-                    class="text-4xl cursor-pointer hover:scale-110 transition-all" v-html="emoji"></span>
+                    class=" md:text-4xl cursor-pointer hover:scale-110 transition-all" v-html="emoji"></span>
             </div>
 
 
 
-            <div class="flex items-center w-full gap-5">
+            <div class="flex items-center w-full md:gap-5">
                 <div>
-                    <svg v-if="!modalEmojis" @click="toogleEmojis" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <svg v-if="!modalEmojis" @click="toogleEmojis" width="60" height="60" viewBox="0 0 60 60"
+                        fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <rect width="60" height="60" fill="url(#pattern0_32_4)" />
                         <defs>
                             <pattern id="pattern0_32_4" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -56,8 +54,8 @@
                         </defs>
                     </svg>
 
-                    <svg @click="toogleEmojis" v-if="modalEmojis" width="86" height="72" viewBox="0 0 86 72" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <svg @click="toogleEmojis" v-if="modalEmojis" width="86" height="72" viewBox="0 0 86 72" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <rect width="86" height="72" fill="url(#pattern0_66_2)" />
                         <defs>
                             <pattern id="pattern0_66_2" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -74,8 +72,8 @@
 
 
                 <button>
-                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
-                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
                         <rect width="60" height="60" fill="url(#pattern0_32_6)" />
                         <defs>
                             <pattern id="pattern0_32_6" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -90,7 +88,4 @@
 
         </form>
     </div>
-
-
-
 </div>

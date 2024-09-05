@@ -4,7 +4,7 @@
 
     {% block body %}
     <div class="flex items-center justify-center min-h-screen bg-[#3e9dfc] p-2 sm:p-8 overflow-hidden">
-        <form action="{{ url_for('users.register') }}" method="post"
+        <form action="{{ url_for('users.register') }}" method="post" enctype="multipart/form-data"
             class="relative overflow-hidden before:absolute before:left-[-50px] before:top-[-50px] before:rounded-[50%] before:w-[100px] before:h-[100px] before:bg-[#b3d9ff] before:content-[''] after:absolute after:right-[-50px] after:bottom-[-50px] after:rounded-[50%] after:w-[100px] after:h-[100px] after:bg-[#b3d9ff] after:content-[''] w-[500px] h-[520px] rounded-[3%] p-3 shadow-xl bg-white"
             style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.507);">
             <div class="flex justify-center items-center  mb-12 mt-8">
@@ -40,6 +40,12 @@
                         id="lastname" name="lastname" required>
                 </div>
 
+                <div class="grid group">
+                    <label for="fullname"
+                        class="text-[#000000a6] pl-10 font-normal hidden group-focus-within:block">FullName:</label>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" />
+                </div>
+
                 <div class="flex justify-between items-center mt-1">
 
                     <a href="/users/login"
@@ -68,6 +74,7 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
+
     </div>
     {% endblock %}
 

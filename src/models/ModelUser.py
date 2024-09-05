@@ -40,34 +40,31 @@ class ModelUser:
             user_id = current_user.id
             result = []
             for user in all_users:
-                letters=user.first_letter()+user.first_letter_of_lastname()
-                fullname=user.name + ' ' +  user.lastname
+                letters = user.first_letter() + user.first_letter_of_lastname()
+                fullname = user.name + ' ' + user.lastname
 
                 conexion = db.session.query(Conexion).filter(
                     Conexion.user_id2 == user.id,
                     Conexion.user_id == user_id
                 ).first()
-                
-                mesagges_tem=[]
-                mesagges=[]
+
+                mesagges_tem = []
+                mesagges = []
 
                 if conexion:
-                    mesagges_tem=db.session.query(Message).filter(Message.conexion_id==conexion.id).order_by(asc(Message.id)).all()
+                    mesagges_tem = db.session.query(Message).filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
 
                     for message in mesagges_tem:
+
                         mesagges.append({
                             'id': message.id,
                             'message': message.message,
                             'user_id': message.user_id,
-                            'conexion_id':message.conexion_id,
+                            'conexion_id': message.conexion_id,
+                            'letters': letters
                         })
-                
 
-                
-                conexion_id= None
-                if conexion:
-                    conexion_id=conexion.id
-
+                conexion_id = conexion.id if conexion else None
 
                 result.append({
                     'id': user.id,
@@ -76,21 +73,23 @@ class ModelUser:
                     'fullname': fullname,
                     'name': user.name,
                     'lastname': user.lastname,
-                    'user_id': user.id,
-                    'rol':user.rol,
-                    'color':user.color,
+                    'userLoginId': current_user.id,
+                    'rol': user.rol,
+                    'color': user.color,
                     'letter': letters,
-                    'messages':mesagges
+                    'messages': mesagges
                 })
             return result
 
         except Exception as exc:
-            raise Exception(exc)
+            raise Exception(exc) 
         
-        
+
     @classmethod
     def get_by_id(cls, id):
         try:
-            return User.query.get(id)
+            user_tem=User.query.get(id)
+
+            return user_tem
         except Exception as exc:
             raise Exception(exc)

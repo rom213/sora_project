@@ -1,37 +1,39 @@
 
-<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center px-12 pb-3">
+<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center px-6 sm:px-12 pb-3">
   <div
-    class="text-xl font-bold  h-full flex items-center"
+    class=" text-sm sm:text-xl font-bold  h-full flex items-center gap-2"
   >
     <button
-    :class="['text-center text-white w-48 h-full cursor-pointer', {'bg-red-100': navi==='group'}]"
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2', {'bg-red-100': navi==='group'}]"
       @click="toogleNvigate('group')"
     >
       Chat General
     </button>
-    <button
-      class="text-center text-white p-2  w-48 h-full cursor-pointer"
+<!--     <button
+      class="text-center text-white p-2  md:w-48 h-full cursor-pointer"
     >
       Chats
-    </button>
+    </button> -->
     <button
-    :class="['text-center text-white w-48 h-full cursor-pointer', {'bg-red-100': navi==='psi'}]"
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2', {'bg-red-100': navi==='psi'}]"
       @click="toogleNvigate('psi')"
     >
       Psicologia
     </button>
   </div>
 
-  <div class="flex gap-6">
-    <h2 class="sm:text-xl uppercase font-semibold text-white text-center pt-2">
-      {{ current_user.name }} {{ current_user.lastname }} 
+  <div class="flex sm:gap-6 items-center">
+    <h2 class="text-xs sm:text-xl uppercase font-semibold text-white text-center pt-2 flex gap-2">
+        <div v-if="userLogin.rol==='psi'">ps </div> {{ current_user.name }} {{ current_user.lastname }} 
     </h2>
-    <div
-      class="bg-[{{current_user.color}}] flex items-center justify-center rounded-full w-12 h-12"
-    >
-      <span class="text-white font- font-extrabold text-xl"
-        >{{ current_user.first_letter() }}</span
-      >
+    <div class="flex items-center justify-center rounded-full w-12 h-12">
+      {% if current_user.avatar %}
+      <img src="{{ url_for('static', filename='uploads/' + current_user.avatar) }}" alt="avatar" class="w-full h-full object-cover rounded-full" />
+      {% else %}
+      <span class="text-white font-extrabold text-xl">
+        {{ current_user.first_letter() }} 
+      </span>
+      {% endif %}
     </div>
   </div>
 
@@ -47,7 +49,6 @@
     >
   </div> -->
 
+
+
 </div>
-
-
-

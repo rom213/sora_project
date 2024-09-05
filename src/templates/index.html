@@ -8,49 +8,51 @@
     <div>
         {% include 'header/header.html' %}
     </div>
-    
+
 
     <div v-if="navi === 'group'" class="bg-[#A5D2FF] w-full h-screen absolute pt-[70px]">
-        <div class="bg-red-100 overflow-x-auto px-8 h-full relative pb-2 rounded-lg z-40 pt-2">
+        <div class="bg-red-100 overflow-x-auto px-1 sm:px-8 h-full relative pb-2 rounded-lg z-40 pt-2">
             {% include 'chatgroup/chatGroup.html' %}
         </div>
     </div>
 
 
-    <div v-if="navi === 'psi'" class="bg-[#A5D2FF] w-full h-screen pt-[80px]">
-        <div class="bg-red-100  px-8 h-full pb-2 rounded-lg z-40 pt-2">
+    <div v-if="navi === 'psi'" class="bg-[#A5D2FF] w-full h-screen pt-[70px] ">
+        <div class="bg-red-100 px-1 sm:px-8 h-full pb-2 rounded-lg  pt-2 relative  z-50">
             {% include 'psico/psico.html' %}
         </div>
     </div>
-    
-    
+
+
 </div>
 
 
 
 
 
-    <script>
-        const { createApp, ref, onMounted } = Vue;
+<script>
+    const { createApp, ref, onMounted } = Vue;
 
-        createApp({
-            setup() {
-                const socket = ref(null);
-                const messages = ref(JSON.parse('{{ messages|tojson|safe }}')); 
-                const psych=ref(JSON.parse('{{ psychology|tojson|safe }}'))
-
-
-                const psychologyMessage=ref(null)
-                const message = ref('');
-                const navi = ref('psi');
-
-                console.log(psych)
-
-                let indexMessagePys=null
+    createApp({
+        setup() {
+            const socket = ref(null);
+            const messages = ref(JSON.parse('{{ messages|tojson|safe }}'));
+            const psych = ref(JSON.parse('{{ psychology|tojson|safe }}'));
+            const userLogin = ref(JSON.parse('{{ userLogin|tojson|safe }}'));
 
 
 
-                let emojis = ref([
+            const sidebarPsych = ref(false)
+            
+            const psychologyMessage = ref(null)
+            const message = ref('');
+            const navi = ref('psi');
+
+            let indexMessagePys = null
+
+
+
+            let emojis = ref([
                 '😀', '😄', '😁', '😂', '🤣', '😊', '😍', '🥰', '🤭', '🤷',
                 '🙋‍♀️', '🙋', '🙈', '🙉', '🙊', '🫦', '🐯', '🌿', '☘', '🍀',
                 '⚡', '🔥', '💥', '⛈', '🌞', '🎄', '💏', '😡', '😔', '🍉',
@@ -65,79 +67,123 @@
                 '🏸', '🏒', '🏑', '🥅', '⛳', '🎣', '🤿', '🎽', '🏹', '🧑‍🎤',
                 '🧑‍🍳', '🧑‍🔬', '🧑‍🚀', '👶', '👨‍🍼', '🧓', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️',
                 '🧙‍♂️', '🧙‍♀️', '🧚‍♂️', '🧚‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧛‍♂️', '🧛‍♀️',
-                '🧟‍♂️', '🧟‍♀️','🖕','🥵','🤤','😈'
+                '🧟‍♂️', '🧟‍♀️', '🖕', '🥵', '🤤', '😈'
             ]);
 
+            toogleSidebarPsi = () => {
+                sidebarPsych.value = !sidebarPsych.value
+            }
 
-                toogleNaviChatPsyc=(index)=>{
-                    indexMessagePys=index
-                    psychologyMessage.value=psych.value[index];
+
+            toogleNaviChatPsyc = (index) => {
+
+                sidebarPsych.value = false
+                indexMessagePys = index
+                psychologyMessage.value = psych.value[index];
+            }
+
+
+            const modalEmojis = ref(false);
+
+            const toogleEmojis = () => {
+                modalEmojis.value = !modalEmojis.value
+            }
+
+            const toogleNvigate = (val) => {
+                navi.value = val
+            }
+
+
+
+            const adEmoji = (value) => {
+                message.value = message.value.concat(value)
+            }
+
+
+
+            const sendMessage = (user) => {
+                if (message.value && navi.value === 'group') {
+                    socket.value.emit('message', message.value);
+                    message.value = '';
                 }
 
-
-                const modalEmojis=ref(false);
-
-                const toogleEmojis=()=>{
-                    modalEmojis.value=!modalEmojis.value
+                if (message.value && navi.value === 'psi') {
+                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id }
+                    socket.value.emit('message_psi', data)
+                    message.value = '';
                 }
-
-                const toogleNvigate=(val)=>{
-                    navi.value=val
-                }
+            };
 
 
 
-                const adEmoji=(value)=>{
-                    message.value=message.value.concat(value)
-                }
-
-
-                
-                const sendMessage = (user) => {
-                    if (message.value && navi.value==='group') {
-                        socket.value.emit('message', message.value);
-                        message.value = '';
-                    }
-
-                    if (message.value && navi.value==='psi') {
-                        data={message:message.value, conexion_id:user.conexion_id, user_id:user.id}
-                        socket.value.emit('message_psi', data)
-                        message.value = '';
-                    }
-                };
-
-
-
-                onMounted(() => {
-                    socket.value = io.connect();
-                    socket.value.on('message', (data) => {
-                        messages.value.push(data[data.length-1]);
-                    });
-
-                    socket.value.on('message_psi', (data) => {
-                        if (indexMessagePys !== null) {
-                            psychologyMessage.value=data[indexMessagePys]
-                        }
-                        psych.value=data
-                    });
+            onMounted(() => {
+                socket.value = io.connect();
+                socket.value.on('message', (data) => {
+                    messages.value.push(data[data.length - 1]);
                 });
 
-                return {
-                    messages,
-                    message,
-                    sendMessage,
-                    emojis,
-                    toogleEmojis,
-                    modalEmojis,
-                    adEmoji,
-                    navi,
-                    toogleNvigate,
-                    psych,
-                    psychologyMessage,
-                    toogleNaviChatPsyc
-                };
-            }
-        }).mount('#app');
-    </script>
-{% endblock %}
+                socket.value.on('message_psi', (data) => {
 
+                    if (data[0].userLoginId===userLogin.value.id) {
+                        if (indexMessagePys !== null) {
+                            psychologyMessage.value = data[indexMessagePys]
+                        }
+                        psych.value = data  
+                    }
+
+
+
+                });
+            });
+
+            return {
+                userLogin,
+
+                messages,
+                message,
+                sendMessage,
+
+
+
+                emojis,
+                toogleEmojis,
+                modalEmojis,
+                adEmoji,
+
+
+                navi,
+                toogleNvigate,
+
+                psych,
+
+                psychologyMessage,
+                toogleNaviChatPsyc,
+
+                sidebarPsych,
+                toogleSidebarPsi
+            };
+        }
+    }).mount('#app');
+</script>
+
+<style>
+    .scrollbar-custom::-webkit-scrollbar {
+        width: 8px;
+        /* Ancho del scrollbar */
+        height: 8px;
+        /* Altura del scrollbar (para el desplazamiento horizontal) */
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+        background-color: #888;
+        /* Color del "pulgar" */
+        border-radius: 10px;
+        /* Bordes redondeados */
+    }
+
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+        /* Color del "pulgar" al pasar el ratón por encima */
+    }
+</style>
+{% endblock %}
