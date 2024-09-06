@@ -4,6 +4,7 @@ from models.entities.Group_message import Group_message
 from models.ModelMessageGroup import ModelMessageGroup
 from models.ModelMessage import ModelMessage
 from models.ModelConexion import ModelConexion
+from models.ModelUser import ModelUser
 
 from flask_login import current_user
 
@@ -30,17 +31,27 @@ def register_socketio_events(socketio_instance):
     @socketio.on('message_psi')
     def handle_message_psi(data):
         if current_user.is_authenticated:
-            conexion_id=data.get('conexion_id')
-            if not data.get('conexion_id'):
-                conexion= ModelConexion.create(user_id2=data.get('user_id'));
-                
-                if conexion:
-                    conexion_id=conexion.id
+            conexion_id = data.get('conexion_id')
             
+            if not conexion_id:
+                conexion = ModelConexion.create(user_id2=data.get('user_id'))
+                if conexion:
+                    conexion_id = conexion.id
+
             group_messages = ModelMessage.create(message=data.get('message'), conexion_id=conexion_id)
+
             if group_messages:
-                emit('message_psi', group_messages, broadcast=True)
+                first_user = group_messages[0]
+                if current_user.id == first_user.get('userLoginId'):
+                    allPsychology = ModelUser.allPsychologyUsers(user_id=current_user.id, rol=current_user.rol)
+                    print(data.get('user_id'))
+                    emit('message_psi', allPsychology, broadcast=True)
+                    
+                
+                allPsychology=ModelUser.allPsychologyUsers(user_id=data.get('user_id'), rol=data.get('rol'))
+                emit('message_psi', allPsychology, broadcast=True)
         else:
             print("Anonymous user sent a message")
+
     
     

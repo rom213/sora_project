@@ -11,6 +11,9 @@ from models.ModelUser import ModelUser
 from models.entities.Group_message import Group_message
 
 
+from flask_login import current_user
+
+
 app = Flask(__name__)
 app.config.from_object(config['development'])
 
@@ -40,7 +43,7 @@ def root():
 @app.route('/index')
 @login_required
 def index():
-    allPsy=ModelUser.allPsychologyUsers()
+    allPsy=ModelUser.allPsychologyUsers(user_id=current_user.id, rol= current_user.rol)
     messages=ModelMessageGroup.all()
     userLogin = {
                 "id": current_user.id,

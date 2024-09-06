@@ -4,6 +4,7 @@ from .entities.Message import Message
 from sqlalchemy import asc, desc
 from . import db
 from flask_login import current_user
+from sqlalchemy import desc
 
 class ModelUser:
     @classmethod
@@ -34,52 +35,97 @@ class ModelUser:
             raise Exception(exc)
         
     @classmethod
-    def allPsychologyUsers(cls):
+    def allPsychologyUsers(cls, user_id, rol):
         try:
-            all_users = User.query.filter_by(rol='psi').all()
-            user_id = current_user.id
-            result = []
-            for user in all_users:
-                letters = user.first_letter() + user.first_letter_of_lastname()
-                fullname = user.name + ' ' + user.lastname
+            if rol== 'psi':
+                conexions=Conexion.query.filter(Conexion.user_id==user_id or Conexion.user_id2== user_id).all()
+                result=[]
+                for conexion in conexions:
+                    mesagges_tem= Message.query.filter(Message.conexion_id==conexion.id).order_by(asc(Message.id)).all();
+                    
+                    user={};
 
-                conexion = db.session.query(Conexion).filter(
-                    Conexion.user_id2 == user.id,
-                    Conexion.user_id == user_id
-                ).first()
+                    if conexion.user_id!= user_id:
+                        user= User.query.filter(User.id==conexion.user_id).first()
 
-                mesagges_tem = []
-                mesagges = []
+                    
 
-                if conexion:
-                    mesagges_tem = db.session.query(Message).filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
-
+                    mesagges=[]
+                    fullname = user.name + ' ' + user.lastname
                     for message in mesagges_tem:
+                            mesagges.append({
+                                'id': message.id,
+                                'message': message.message,
+                                'user_id': message.user_id,
+                                'conexion_id': message.conexion_id,
+                                'letters': user.init_letters()
+                            })
 
-                        mesagges.append({
-                            'id': message.id,
-                            'message': message.message,
-                            'user_id': message.user_id,
-                            'conexion_id': message.conexion_id,
-                            'letters': letters
-                        })
+                    
+                    
 
-                conexion_id = conexion.id if conexion else None
+                    result.append({                        
+                        'id': user.id,
+                        'username': user.username,
+                        'conexion_id': conexion.id,
+                        'fullname': fullname,
+                        'name': user.name,
+                        'lastname': user.lastname,
+                        'userLoginId': user_id,
+                        'rol': user.rol,
+                        'color': user.color,
+                        'letter': user.init_letters(),
+                        'messages': mesagges})
+                    
+                result.sort(key=lambda x: max(msg['id'] for msg in x['messages']), reverse=True)
+                return result
+            
 
-                result.append({
-                    'id': user.id,
-                    'username': user.username,
-                    'conexion_id': conexion_id,
-                    'fullname': fullname,
-                    'name': user.name,
-                    'lastname': user.lastname,
-                    'userLoginId': current_user.id,
-                    'rol': user.rol,
-                    'color': user.color,
-                    'letter': letters,
-                    'messages': mesagges
-                })
-            return result
+            if rol == 'user':
+                all_users = User.query.filter_by(rol='psi').all()
+                result = []
+                for user in all_users:
+                    letters = user.first_letter() + user.first_letter_of_lastname()
+                    fullname = user.name + ' ' + user.lastname
+
+                    conexion = db.session.query(Conexion).filter(
+                        Conexion.user_id2 == user.id,
+                        Conexion.user_id == user_id
+                    ).first()
+
+                    mesagges_tem = []
+                    mesagges = []
+
+                    if conexion:
+                        mesagges_tem = db.session.query(Message).filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
+
+                        for message in mesagges_tem:
+
+                            mesagges.append({
+                                'id': message.id,
+                                'message': message.message,
+                                'user_id': message.user_id,
+                                'conexion_id': message.conexion_id,
+                                'letters': letters
+                            })
+
+                    conexion_id = conexion.id if conexion else None
+
+                    result.append({
+                        'id': user.id,
+                        'username': user.username,
+                        'conexion_id': conexion_id,
+                        'fullname': fullname,
+                        'name': user.name,
+                        'lastname': user.lastname,
+                        'userLoginId': user_id,
+                        'rol': user.rol,
+                        'color': user.color,
+                        'letter': letters,
+                        'messages': mesagges
+                    })
+                return result
+
 
         except Exception as exc:
             raise Exception(exc) 

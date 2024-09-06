@@ -75,10 +75,10 @@
             }
 
 
-            toogleNaviChatPsyc = (index) => {
-
+            toogleNaviChatPsyc = (index, id) => {
+                console.log(id);
                 sidebarPsych.value = false
-                indexMessagePys = index
+                indexMessagePys = id
                 psychologyMessage.value = psych.value[index];
             }
 
@@ -108,7 +108,8 @@
                 }
 
                 if (message.value && navi.value === 'psi') {
-                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id }
+
+                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol}
                     socket.value.emit('message_psi', data)
                     message.value = '';
                 }
@@ -123,10 +124,9 @@
                 });
 
                 socket.value.on('message_psi', (data) => {
-
                     if (data[0].userLoginId===userLogin.value.id) {
                         if (indexMessagePys !== null) {
-                            psychologyMessage.value = data[indexMessagePys]
+                            psychologyMessage.value = data.find(item => item.id === indexMessagePys);
                         }
                         psych.value = data  
                     }

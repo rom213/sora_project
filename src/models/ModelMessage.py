@@ -76,7 +76,7 @@ class ModelMessage:
             db.session.add(message)
             db.session.commit()
             
-            return ModelUser.allPsychologyUsers()
+            return ModelUser.allPsychologyUsers(user_id, rol=current_user.rol)
             
         except Exception as e:
             raise e
