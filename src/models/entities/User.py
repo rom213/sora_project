@@ -29,6 +29,7 @@ class User(UserMixin, db.Model):
         self.username = username
         self.password = password
         self.name = name
+        self.rol='user'
         self.lastname = lastname
         self.color = self.generate_pastel_color()  # Asigna un color pastel al usuario.
         self.avatar = avatar

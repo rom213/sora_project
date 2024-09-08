@@ -76,10 +76,19 @@
 
 
             toogleNaviChatPsyc = (index, id) => {
-                console.log(id);
                 sidebarPsych.value = false
                 indexMessagePys = id
                 psychologyMessage.value = psych.value[index];
+
+                if (psychologyMessage.value.countMessage!==0) {
+
+                    data = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol}
+                    socket.value.emit('read_message', data) 
+                    psychologyMessage.value.countMessage=0
+                    message.value = '';
+                    
+                }
+                message.value = '';
             }
 
 
@@ -127,8 +136,12 @@
                     if (data[0].userLoginId===userLogin.value.id) {
                         if (indexMessagePys !== null) {
                             psychologyMessage.value = data.find(item => item.id === indexMessagePys);
+                            psychologyMessage.value.countMessage=0
+
+                            data = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol}
+                            socket.value.emit('read_message', data) 
                         }
-                        psych.value = data  
+                        psych.value = data
                     }
 
 

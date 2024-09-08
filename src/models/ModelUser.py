@@ -37,22 +37,23 @@ class ModelUser:
     @classmethod
     def allPsychologyUsers(cls, user_id, rol):
         try:
-            if rol== 'psi':
-                conexions=Conexion.query.filter(Conexion.user_id==user_id or Conexion.user_id2== user_id).all()
-                result=[]
+            if rol == 'psi':
+                conexions = Conexion.query.filter(Conexion.user_id == user_id or Conexion.user_id2 == user_id).all()
+                result = []
+                
                 for conexion in conexions:
-                    mesagges_tem= Message.query.filter(Message.conexion_id==conexion.id).order_by(asc(Message.id)).all();
-                    
-                    user={};
+                    mesagges_tem = Message.query.filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
+                    user = {}
 
-                    if conexion.user_id!= user_id:
-                        user= User.query.filter(User.id==conexion.user_id).first()
+                    if conexion.user_id != user_id:
+                        user = User.query.filter(User.id == conexion.user_id).first()
 
-                    
-
-                    mesagges=[]
+                    mesagges = []
                     fullname = user.name + ' ' + user.lastname
-                    for message in mesagges_tem:
+                    
+                    # Si no hay mensajes, añade la conexión en su lugar
+                    if mesagges_tem:
+                        for message in mesagges_tem:
                             mesagges.append({
                                 'id': message.id,
                                 'message': message.message,
@@ -60,11 +61,11 @@ class ModelUser:
                                 'conexion_id': message.conexion_id,
                                 'letters': user.init_letters()
                             })
-
-                    
                     
 
-                    result.append({                        
+ 
+                    
+                    result.append({
                         'id': user.id,
                         'username': user.username,
                         'conexion_id': conexion.id,
@@ -75,9 +76,14 @@ class ModelUser:
                         'rol': user.rol,
                         'color': user.color,
                         'letter': user.init_letters(),
-                        'messages': mesagges})
-                    
-                result.sort(key=lambda x: max(msg['id'] for msg in x['messages']), reverse=True)
+                        'messages': mesagges
+                    })
+                
+                # Ordenar por el último mensaje o conexión
+                result.sort(
+                    key=lambda x: max((msg['id'] if msg['id'] is not None else -1) for msg in x['messages']) if x['messages'] else -1,
+                    reverse=True
+                )         
                 return result
             
 
@@ -95,6 +101,7 @@ class ModelUser:
 
                     mesagges_tem = []
                     mesagges = []
+                    countMessage=0
 
                     if conexion:
                         mesagges_tem = db.session.query(Message).filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
@@ -108,7 +115,13 @@ class ModelUser:
                                 'conexion_id': message.conexion_id,
                                 'letters': letters
                             })
+                            if message.user_id !=user_id and message.readmessage==0:
+                                countMessage=countMessage+1
+                        
 
+
+
+                    print(countMessage)
                     conexion_id = conexion.id if conexion else None
 
                     result.append({
@@ -122,8 +135,15 @@ class ModelUser:
                         'rol': user.rol,
                         'color': user.color,
                         'letter': letters,
-                        'messages': mesagges
+                        'messages': mesagges,
+                        'countMessage':countMessage
                     })
+                
+                result.sort(
+                    key=lambda x: max((msg['id'] if msg['id'] is not None else -1) for msg in x['messages']) if x['messages'] else -1,
+                    reverse=True
+                )                
+            
                 return result
 
 

@@ -14,13 +14,15 @@
 
 
     <div :class="['bg-[#98A6FF] col-start-1 rounded-r-lg col-end-4 px-3 pt-2 md:p-4 absolute md:relative h-full overflow-auto', {'z-40':sidebarPsych}]">
-        <div class="grid  gap-4">
+        <div class="grid  gap-4 relative">
             <div v-for="ps, index in psych" :key="ps.id" @click="toogleNaviChatPsyc(index, ps.id)"
                 class="flex cursor-pointer gap-2 items-center bg-[#E0DAFC] md:text-2xl md:min-h-12 py-2 px-1 rounded-xl px2 ">
                 <div v-html="ps.letter" :class="['h-11 w-11 md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
                     :style="{backgroundColor:ps.color}"></div>
                 Ps
                 <p v-html="ps.fullname"></p>
+
+                <div class="bg-green-500 rounded-full w-7 h-7 flex items-center text-center justify-center pb-1 text-sm absolute font-semibold right-0 -top-2 lg:top-5 lg:right-4 " v-if="ps.countMessage!=0" v-html="ps.countMessage"></div>
             </div>
         </div>
     </div>
