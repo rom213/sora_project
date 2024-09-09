@@ -40,8 +40,9 @@ class ModelUser:
             if rol == 'psi':
                 conexions = Conexion.query.filter(Conexion.user_id == user_id or Conexion.user_id2 == user_id).all()
                 result = []
-                
+
                 for conexion in conexions:
+                    countMessage=0
                     mesagges_tem = Message.query.filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
                     user = {}
 
@@ -61,8 +62,10 @@ class ModelUser:
                                 'conexion_id': message.conexion_id,
                                 'letters': user.init_letters()
                             })
+                            if message.user_id !=user_id and message.readmessage==0:
+                                countMessage=countMessage+1
                     
-
+                    print(countMessage)
  
                     
                     result.append({
@@ -76,7 +79,8 @@ class ModelUser:
                         'rol': user.rol,
                         'color': user.color,
                         'letter': user.init_letters(),
-                        'messages': mesagges
+                        'messages': mesagges,
+                        'countMessage':countMessage
                     })
                 
                 # Ordenar por el último mensaje o conexión
@@ -118,12 +122,8 @@ class ModelUser:
                             if message.user_id !=user_id and message.readmessage==0:
                                 countMessage=countMessage+1
                         
-
-
-
-                    print(countMessage)
                     conexion_id = conexion.id if conexion else None
-
+                    print(countMessage)
                     result.append({
                         'id': user.id,
                         'username': user.username,

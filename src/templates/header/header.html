@@ -8,6 +8,8 @@
       @click="toogleNvigate('group')"
     >
       Chat General
+
+      <div v-if="countMessages.group!==0" v-html="countMessages.group"></div> 
     </button>
 <!--     <button
       class="text-center text-white p-2  md:w-48 h-full cursor-pointer"
@@ -19,6 +21,7 @@
       @click="toogleNvigate('psi')"
     >
       Psicologia
+     <div v-if="countMessages.psi!==0" v-html="countMessages.psi"></div> 
     </button>
   </div>
 
