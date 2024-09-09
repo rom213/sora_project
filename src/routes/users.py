@@ -20,7 +20,7 @@ def register():
         password = request.form.get('password')
         name = request.form.get('name')
         lastname = request.form.get('lastname')
-
+        anonymous_user=request.form.get('anonymous_user')
         avatar = request.files.get('avatar')
 
         avatar_filename = None
@@ -31,7 +31,7 @@ def register():
                 flash("Invalid file type. Only .png, .jpg, .jpeg, .gif are allowed.")
                 return render_template('auth/register.html')
 
-        user = User(username=username, password=generate_password_hash(password), name=name, lastname=lastname, avatar=avatar_filename)
+        user = User(username=username, password=generate_password_hash(password), name=name, lastname=lastname, avatar=avatar_filename,anonymous_user=anonymous_user) 
 
 
         try:
