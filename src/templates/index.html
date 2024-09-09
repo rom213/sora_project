@@ -27,192 +27,205 @@
 </div>
 
 
-    <script>
-        const { createApp, ref, onMounted, watch} = Vue;
-    
-        createApp({
-            setup() {
-                const socket = ref(null);
-                const messages = ref(JSON.parse('{{ messages |tojson | safe }}'));
-                const psych = ref(JSON.parse('{{ psychology | tojson | safe }}'));
-                const userLogin = ref(JSON.parse('{{ userLogin |tojson | safe }}'));
-                const countMessages=ref({
-                    'group':0,
-                    'psi':0
-                })
-    
-                function updateMessageCountPsi()
-                {
-                    psych.value.forEach(conexion=>
-                        {
-                            countMessages.value.psi= countMessages.value.psi+conexion.countMessage
-    
-                            console.log(countMessages.value);
-                        }
-                    )
-                }
-    
-                watch(psych, updateMessageCountPsi, { immediate: true });
-    
-    
-    
-    
-                const sidebarPsych = ref(false)
-                
-                const psychologyMessage = ref(null)
-                const message = ref('');
-                const navi = ref('psi');
-    
-                let indexMessagePys = null
-    
-    
-    
-                let emojis = ref([
-                    '😀', '😄', '😁', '😂', '🤣', '😊', '😍', '🥰', '🤭', '🤷',
-                    '🙋‍♀️', '🙋', '🙈', '🙉', '🙊', '🫦', '🐯', '🌿', '☘', '🍀',
-                    '⚡', '🔥', '💥', '⛈', '🌞', '🎄', '💏', '😡', '😔', '🍉',
-                    '🍊', '🏉', '🏊‍♂️', '🏄‍♀️', '🎯', '🪑', '👩‍🦯', '🎉', '🎂', '🎃',
-                    '🕯', '🎁', '🎈', '🍪', '🍩', '🍻', '🥂', '🥳', '🤖', '👾',
-                    '🤡', '👻', '👽', '💀', '🎃', '🎨', '🎤', '🎧', '🎷', '🎸',
-                    '🎺', '🎻', '🥁', '🎮', '🖥', '💻', '📱', '📷', '📺', '⏰',
-                    '🛏', '🚪', '🗝', '🛋', '🚽', '🚿', '🛁', '🛒', '🚲', '🚕',
-                    '🚌', '🚎', '🚓', '🚑', '🚒', '🚜', '🚛', '🚍', '🚂', '🚀',
-                    '🎢', '🎡', '🎠', '🎪', '🎬', '🎭', '🖼', '🎳', '🎽', '🏅',
-                    '🏆', '🥇', '🥈', '🥉', '⚽', '🏀', '🏈', '🎾', '🏐', '🏓',
-                    '🏸', '🏒', '🏑', '🥅', '⛳', '🎣', '🤿', '🎽', '🏹', '🧑‍🎤',
-                    '🧑‍🍳', '🧑‍🔬', '🧑‍🚀', '👶', '👨‍🍼', '🧓', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️',
-                    '🧙‍♂️', '🧙‍♀️', '🧚‍♂️', '🧚‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧛‍♂️', '🧛‍♀️',
-                    '🧟‍♂️', '🧟‍♀️', '🖕', '🥵', '🤤', '😈'
-                ]);
-    
-                toogleSidebarPsi = () => {
-                    sidebarPsych.value = !sidebarPsych.value
-                }
-    
-    
-                toogleNaviChatPsyc = (index, id) => {
-                    sidebarPsych.value = false
-                    indexMessagePys = id
-                    psychologyMessage.value = psych.value[index];
-    
-                    if (psychologyMessage.value.countMessage!==0) {
-    
-                        data = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol}
-                        socket.value.emit('read_message', data)
-                        countMessages.value.psi=countMessages.value.psi-psychologyMessage.value.countMessage
-                        psychologyMessage.value.countMessage=0
-                        message.value = '';
-                        
+<script>
+    const { createApp, ref, onMounted, watch } = Vue;
+
+    createApp({
+        setup() {
+            const socket = ref(null);
+            const messages = ref(JSON.parse('{{ messages |tojson | safe }}'));
+            const psych = ref(JSON.parse('{{ psychology | tojson | safe }}'));
+            const userLogin = ref(JSON.parse('{{ userLogin |tojson | safe }}'));
+            const countMessages = ref({
+                'group': 0,
+                'psi': 0
+            })
+            let actionBeggin=true
+            function updateMessageCountPsi() {
+                psych.value.forEach(conexion => {
+                    if (actionBeggin) {
+                        countMessages.value.psi = countMessages.value.psi + conexion.countMessage   
                     }
+                    else{
+                        if (conexion.countMessage!==0) {
+                            countMessages.value.psi = countMessages.value.psi + 1    
+                        }
+                    }
+                    actionBeggin=false
+                }
+                )
+            }
+
+            watch(psych, updateMessageCountPsi, { immediate: true });
+
+
+
+
+            const sidebarPsych = ref(false)
+
+            const psychologyMessage = ref(null)
+            const message = ref('');
+            const navi = ref('psi');
+
+            let indexMessagePys = null
+
+
+
+            let emojis = ref([
+                '😀', '😄', '😁', '😂', '🤣', '😊', '😍', '🥰', '🤭', '🤷',
+                '🙋‍♀️', '🙋', '🙈', '🙉', '🙊', '🫦', '🐯', '🌿', '☘', '🍀',
+                '⚡', '🔥', '💥', '⛈', '🌞', '🎄', '💏', '😡', '😔', '🍉',
+                '🍊', '🏉', '🏊‍♂️', '🏄‍♀️', '🎯', '🪑', '👩‍🦯', '🎉', '🎂', '🎃',
+                '🕯', '🎁', '🎈', '🍪', '🍩', '🍻', '🥂', '🥳', '🤖', '👾',
+                '🤡', '👻', '👽', '💀', '🎃', '🎨', '🎤', '🎧', '🎷', '🎸',
+                '🎺', '🎻', '🥁', '🎮', '🖥', '💻', '📱', '📷', '📺', '⏰',
+                '🛏', '🚪', '🗝', '🛋', '🚽', '🚿', '🛁', '🛒', '🚲', '🚕',
+                '🚌', '🚎', '🚓', '🚑', '🚒', '🚜', '🚛', '🚍', '🚂', '🚀',
+                '🎢', '🎡', '🎠', '🎪', '🎬', '🎭', '🖼', '🎳', '🎽', '🏅',
+                '🏆', '🥇', '🥈', '🥉', '⚽', '🏀', '🏈', '🎾', '🏐', '🏓',
+                '🏸', '🏒', '🏑', '🥅', '⛳', '🎣', '🤿', '🎽', '🏹', '🧑‍🎤',
+                '🧑‍🍳', '🧑‍🔬', '🧑‍🚀', '👶', '👨‍🍼', '🧓', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️',
+                '🧙‍♂️', '🧙‍♀️', '🧚‍♂️', '🧚‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧛‍♂️', '🧛‍♀️',
+                '🧟‍♂️', '🧟‍♀️', '🖕', '🥵', '🤤', '😈'
+            ]);
+
+            toogleSidebarPsi = () => {
+                sidebarPsych.value = !sidebarPsych.value
+            }
+
+
+            toogleNaviChatPsyc = (index, id) => {
+                sidebarPsych.value = false
+                indexMessagePys = id
+                psychologyMessage.value = psych.value[index];
+
+                if (psychologyMessage.value.countMessage !== 0) {
+
+                    data = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol }
+                    socket.value.emit('read_message', data)
+                    countMessages.value.psi = countMessages.value.psi - psychologyMessage.value.countMessage
+                    psychologyMessage.value.countMessage = 0
+                    message.value = '';
+
+                }
+                message.value = '';
+            }
+
+
+            const modalEmojis = ref(false);
+
+            const toogleEmojis = () => {
+                modalEmojis.value = !modalEmojis.value
+            }
+
+            const toogleNvigate = (val) => {
+                if (val == 'group') {
+                    countMessages.value.group = 0
+                }
+                navi.value = val
+            }
+
+
+
+            const adEmoji = (value) => {
+                message.value = message.value.concat(value)
+            }
+
+
+
+            const sendMessage = (user) => {
+                if (message.value && navi.value === 'group') {
+                    socket.value.emit('message', message.value);
                     message.value = '';
                 }
-    
-    
-                const modalEmojis = ref(false);
-    
-                const toogleEmojis = () => {
-                    modalEmojis.value = !modalEmojis.value
+
+                if (message.value && navi.value === 'psi') {
+
+                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
+                    socket.value.emit('message_psi', data)
+                    message.value = '';
                 }
-    
-                const toogleNvigate = (val) => {
-                    if (val=='group') {
-                        countMessages.value.group=0
-                    }
-                    navi.value = val
-                }
-    
-    
-    
-                const adEmoji = (value) => {
-                    message.value = message.value.concat(value)
-                }
-    
-    
-    
-                const sendMessage = (user) => {
-                    if (message.value && navi.value === 'group') {
-                        socket.value.emit('message', message.value);
-                        message.value = '';
-                    }
-    
-                    if (message.value && navi.value === 'psi') {
-    
-                        data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol}
-                        socket.value.emit('message_psi', data)
-                        message.value = '';
-                    }
-                };
-    
-    
-    
-                onMounted(() => {
-                    socket.value = io.connect();
-    
-    
-                    socket.value.on('message', (data) => {
-                        if (navi.value!=='group') {
-                            countMessages.value.group=countMessages.value.group+1      
-                        }
-    
-    
-                        messages.value.push(data[data.length - 1]);
-                    });
-    
-    
-    
-                    socket.value.on('message_psi', (data) => {
-                        if (data[0].userLoginId===userLogin.value.id) {
-                            if (indexMessagePys !== null) {
-                                psychologyMessage.value = data.find(item => item.id === indexMessagePys);
-                                psychologyMessage.value.countMessage=0
-    
-                                data_env = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol}
-    
-                                socket.value.emit('read_message', data_env)  
-                            }
-    
-    
-                            psych.value = data 
-                        }
-    
-    
-    
-                    });
+            };
+
+            function reproducirAudio() {
+                const audio = document.getElementById('miAudio');
+
+                audio.play().catch(error => {
+                    console.error("Error al reproducir el audio:", error);
                 });
-    
-                return {
-                    userLogin,
-    
-                    messages,
-                    message,
-                    sendMessage,
-    
-    
-    
-                    emojis,
-                    toogleEmojis,
-                    modalEmojis,
-                    adEmoji,
-    
-    
-                    navi,
-                    toogleNvigate,
-    
-                    psych,
-    
-                    psychologyMessage,
-                    toogleNaviChatPsyc,
-                    
-                    countMessages,
-    
-                    sidebarPsych,
-                    toogleSidebarPsi,
-    
-                    
-                };
             }
-        }).mount('#app');
-    </script>
+
+            onMounted(() => {
+                socket.value = io.connect();
+
+
+                socket.value.on('message', (data) => {
+                    if (navi.value !== 'group') {
+                        countMessages.value.group = countMessages.value.group + 1
+                        reproducirAudio()
+                    }
+
+
+                    messages.value.push(data[data.length - 1]);
+                });
+
+
+
+
+                socket.value.on('message_psi', (data) => {
+                    if (data[0].userLoginId === userLogin.value.id) {
+                        if (indexMessagePys !== null) {
+                            psychologyMessage.value = data.find(item => item.id === indexMessagePys);
+
+                            psychologyMessage.value.countMessage = 0
+
+                            data_env = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol }
+
+                            socket.value.emit('read_message', data_env)
+                        }
+
+                        reproducirAudio()
+                        psych.value = data
+                    }
+
+
+
+                });
+            });
+
+            return {
+                userLogin,
+
+                messages,
+                message,
+                sendMessage,
+
+
+
+                emojis,
+                toogleEmojis,
+                modalEmojis,
+                adEmoji,
+
+
+                navi,
+                toogleNvigate,
+
+                psych,
+
+                psychologyMessage,
+                toogleNaviChatPsyc,
+
+                countMessages,
+
+                sidebarPsych,
+                toogleSidebarPsi,
+
+
+            };
+        }
+    }).mount('#app');
+</script>
 
 
 

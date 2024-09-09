@@ -1,15 +1,17 @@
 
 <div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center px-6 sm:px-12 pb-3">
+
+  <audio id="miAudio" src="../../static/sound/mixkit-long-pop-2358.mp3"></audio>
   <div
     class=" text-sm sm:text-xl font-bold  h-full flex items-center gap-2"
   >
     <button
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2', {'bg-red-100': navi==='group'}]"
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='group'}]"
       @click="toogleNvigate('group')"
     >
       Chat General
 
-      <div v-if="countMessages.group!==0" v-html="countMessages.group"></div> 
+      <div v-if="countMessages.group!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.group"></div> 
     </button>
 <!--     <button
       class="text-center text-white p-2  md:w-48 h-full cursor-pointer"
@@ -17,11 +19,11 @@
       Chats
     </button> -->
     <button
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2', {'bg-red-100': navi==='psi'}]"
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='psi'}]"
       @click="toogleNvigate('psi')"
     >
       Psicologia
-     <div v-if="countMessages.psi!==0" v-html="countMessages.psi"></div> 
+      <div v-if="countMessages.psi!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.psi"></div> 
     </button>
   </div>
 
