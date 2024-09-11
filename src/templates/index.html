@@ -1,9 +1,9 @@
-{% extends 'layout.html' %}
+{% extends 'layout_message.html' %}
 
 {% block titles %} Chat App {% endblock %}
 
 {% block body %}
-<div id="app" class="">
+<div class="" id="app">
 
     <div>
         {% include 'header/header.html' %}
@@ -23,32 +23,39 @@
         </div>
     </div>
 
+    <div v-if="navi === 'admin'" class="bg-[#A5D2FF] w-full h-screen pt-[70px] ">
+        <div class="bg-red-100 px-1 sm:px-8 h-full pb-2 rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
+            {% include 'admin/permissions/permissions.html' %}
+        </div>
+    </div>
+
 
 </div>
 
 
-
-
-
 <script>
-    const { createApp, ref, onMounted } = Vue;
+    const { createApp, ref, onMounted, watch } = Vue;
 
     createApp({
         setup() {
             const socket = ref(null);
-            const messages = ref(JSON.parse('{{ messages|tojson|safe }}'));
-            const psych = ref(JSON.parse('{{ psychology|tojson|safe }}'));
-            const userLogin = ref(JSON.parse('{{ userLogin|tojson|safe }}'));
-
-
+            const messages = ref(JSON.parse('{{ messages |tojson | safe }}'));
+            const psych = ref(JSON.parse('{{ psychology | tojson | safe }}'));
+            const userLogin = ref(JSON.parse('{{ userLogin |tojson | safe }}'));
+            const countMessages = ref({
+                'group': 0,
+                'psi': 0
+            })
 
             const sidebarPsych = ref(false)
+
 
             const psychologyMessage = ref(null)
             const message = ref('');
             const navi = ref('psi');
 
-            let indexMessagePys = null
+
+            const modalEmojis = ref(false);
 
 
 
@@ -83,20 +90,32 @@
 
 
             toogleNaviChatPsyc = (index, id) => {
-                console.log(id);
                 sidebarPsych.value = false
                 indexMessagePys = id
                 psychologyMessage.value = psych.value[index];
+
+                if (psychologyMessage.value.countMessage !== 0) {
+
+                    data = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol }
+                    socket.value.emit('read_message', data)
+                    countMessages.value.psi = countMessages.value.psi - psychologyMessage.value.countMessage
+                    psychologyMessage.value.countMessage = 0
+                    message.value = '';
+
+                }
+                message.value = '';
             }
 
-
-            const modalEmojis = ref(false);
 
             const toogleEmojis = () => {
                 modalEmojis.value = !modalEmojis.value
             }
 
             const toogleNvigate = (val) => {
+                if (val == 'group') {
+                    countMessages.value.group = 0
+                    psychologyMessage.value = null
+                }
                 navi.value = val
             }
 
@@ -117,20 +136,39 @@
                 if (message.value && navi.value === 'psi') {
 
                     data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
+                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
                     socket.value.emit('message_psi', data)
                     message.value = '';
                 }
             };
 
+            function reproducirAudio() {
+                const audio = document.getElementById('miAudio');
 
+                audio.play().catch(error => {
+                    console.error("Error al reproducir el audio:", error);
+                });
+            }
 
             onMounted(() => {
                 socket.value = io.connect();
+
+
                 socket.value.on('message', (data) => {
+                    if (navi.value !== 'group') {
+                        countMessages.value.group = countMessages.value.group + 1
+                        reproducirAudio()
+                    }
+
+
                     messages.value.push(data[data.length - 1]);
                 });
 
+
+
+
                 socket.value.on('message_psi', (data) => {
+                    if (data[0].userLoginId === userLogin.value.id) {
                     if (data[0].userLoginId === userLogin.value.id) {
                         if (indexMessagePys !== null) {
                             psychologyMessage.value = data.find(item => item.id === indexMessagePys);
@@ -142,6 +180,29 @@
 
                 });
             });
+
+
+
+            //////////////////functions admin user////////////////////////////
+
+            const idUserAdminForm = ref(null)
+            const userData = ref(null);
+
+            watch(idUserAdminForm, async (newValue) => {
+                if (newValue !== null) { // Verifica si el ID es válido
+                    try {
+                        const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${newValue}`);
+                        userData.value = response.data;
+                    } catch (error) {
+                        console.error('Error al obtener los datos del usuario:', error);
+                    }
+                } else {
+                    userData.value = null; // Reinicia userData si el ID es inválido
+                }
+            }, { immediate: true });
+
+
+
 
             return {
                 userLogin,
@@ -166,12 +227,20 @@
                 psychologyMessage,
                 toogleNaviChatPsyc,
 
+                countMessages,
+
                 sidebarPsych,
-                toogleSidebarPsi
+                toogleSidebarPsi,
+
+                idUserAdminForm
+
             };
         }
     }).mount('#app');
 </script>
+
+
+
 
 <style>
     .scrollbar-custom::-webkit-scrollbar {
