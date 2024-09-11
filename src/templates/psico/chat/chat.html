@@ -32,11 +32,8 @@
                         <div>
                             
                         </div>
-                        <div class="px-4 bg-[#CEE8FF] rounded-lg flex items-center">
-                            <p 
-                                v-html="msg.message" 
-                                class="md:text-xl"
-                            ></p>
+                        <div class="px-4 bg-[#CEE8FF] rounded-lg flex items-center relative max-w-[200px] lg:max-w-[500px]">
+                            <p v-html="msg.message" class="md:text-3xl text-lg break-words overflow-hidden whitespace-normal"></p>
                         </div>
                         <div v-if="{{current_user.id}} === msg.user_id" :class="['rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center bg-[{{current_user.color}}]']"
                         >

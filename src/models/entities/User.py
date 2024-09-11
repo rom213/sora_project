@@ -34,6 +34,7 @@ class User(UserMixin, db.Model):
         self.username = username
         self.password = password
         self.name = name
+        self.rol='user'
         self.lastname = lastname
         self.color = self.generate_pastel_color()
         self.iuud = self.generate_user_id()
@@ -72,3 +73,16 @@ class User(UserMixin, db.Model):
         first = self.first_letter()
         last = self.first_letter_of_lastname()
         return f"{first}{last}" if first and last else None
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "rol": self.rol,
+            "name": self.name,
+            "lastname": self.lastname,
+            "color": self.color,
+            "iuud": self.iuud,
+            "anonymous_user": self.anonymous_user,
+            "avatar": self.avatar,
+        }

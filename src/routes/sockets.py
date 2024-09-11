@@ -44,7 +44,7 @@ def register_socketio_events(socketio_instance):
                 first_user = group_messages[0]
                 if current_user.id == first_user.get('userLoginId'):
                     allPsychology = ModelUser.allPsychologyUsers(user_id=current_user.id, rol=current_user.rol)
-                    print(data.get('user_id'))
+
                     emit('message_psi', allPsychology, broadcast=True)
                     
                 
@@ -53,5 +53,12 @@ def register_socketio_events(socketio_instance):
         else:
             print("Anonymous user sent a message")
 
-    
+    @socketio.on('read_message')
+    def read_message(data):
+        if current_user.is_authenticated:
+            ModelMessage.readMessage(conexion_id=data.get('conexion_id'),user_id=data.get('user_id'))
+        else:
+            print("Anonymous user sent a message")
+
+
     

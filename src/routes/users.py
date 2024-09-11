@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import login_user, logout_user, login_required
@@ -74,6 +74,21 @@ def logout():
 @login_required
 def home():
     return render_template('home.html')
+
+
+
+@users_bp.route('/<int:iuud>', methods=['GET'])
+def getUserIuud(iuud):
+    data= ModelUser.get_by_iuud(iuud=iuud)
+    if data:
+         return jsonify(data.to_dict())
+    else:
+        return jsonify({"error": "Usuario no encontrado"}), 404  
+
+    
+
+
+
 
 def save_avatar(avatar):
     """Guardar el archivo de avatar en la carpeta designada."""

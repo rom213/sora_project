@@ -65,6 +65,27 @@ class ModelMessage:
             
         except Exception as e:
             raise e
+        
+    @classmethod
+    def readMessage(cls, conexion_id, user_id):
+        try:
+            # Actualiza directamente los mensajes que cumplen con los criterios
+            updated_rows = db.session.query(Message).filter(
+                Message.conexion_id == conexion_id,
+                Message.user_id == user_id,
+                Message.readmessage == 0
+            ).update({Message.readmessage: 1})  # Cambia a True si prefieres booleano
+
+            # Guarda los cambios en la base de datos
+            db.session.commit()
+
+            # Verifica si se actualizaron registros
+            return updated_rows > 0
+
+        except Exception as e:
+            # Deshacer cualquier cambio en caso de error
+            db.session.rollback()
+            raise e
 
     @classmethod
     def create(cls, message, conexion_id):
