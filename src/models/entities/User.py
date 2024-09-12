@@ -16,6 +16,7 @@ class User(UserMixin, db.Model):
     anonymous_user = db.Column(db.String(20),nullable= False)
     avatar = db.Column(db.String(100), nullable=True)
     group_messages = db.relationship('Group_message', backref='user', lazy=True)
+    email = db.Column(db.String(120), unique=True, nullable=True)
 
     def generate_user_id(self):
         code= f"{random.randint(0,999999999999999):015d}"
@@ -29,7 +30,7 @@ class User(UserMixin, db.Model):
         return "#{:02x}{:02x}{:02x}".format(red, green, blue)  # Genera el color pastel en formato hexadecimal.
 
 
-    def __init__(self, username, password,name="",lastname="", avatar="",anonymous_user=""):
+    def __init__(self, username, password, email="", name="",lastname="", avatar="",anonymous_user=""):
 
         self.username = username
         self.password = password
@@ -40,6 +41,7 @@ class User(UserMixin, db.Model):
         self.iuud = self.generate_user_id()
         self.avatar = avatar
         self.anonymous_user = anonymous_user 
+        self.email = email
     
 
 
