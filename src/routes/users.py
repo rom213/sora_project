@@ -6,7 +6,12 @@ from models.ModelUser import ModelUser
 from models.entities.User import User
 from models import db
 import os
+from flask_login import current_user
+
 from config import config, allowed_file
+
+from flask_socketio import SocketIO, emit
+
 
 # Selecciona la configuración de desarrollo
 app_config = config['development']
@@ -78,14 +83,57 @@ def home():
 
 
 @users_bp.route('/<int:iuud>', methods=['GET'])
+@login_required
 def getUserIuud(iuud):
     data= ModelUser.get_by_iuud(iuud=iuud)
     if data:
          return jsonify(data.to_dict())
     else:
-        return jsonify({"error": "Usuario no encontrado"}), 404  
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+
+
+@users_bp.route('/admin', methods=['GET', 'POST'])
+@login_required
+def getUsersForAdmin():
+    if request.method == 'GET':
+        data_tem= ModelUser.get_users_by_admin()
+        if data_tem:
+            data=[]
+            for user in data_tem:
+                data.append(user.to_dict())
+            return jsonify(data), 200
+        else:
+            return jsonify({"error": "Usuarios no encontrado"}), 404
+
+    if request.method == 'POST':
+        data = request.json
+        rol=data.get('rol')
+        user_id=data.get('user_id')
+        data= ModelUser.updateRolUser(rol=rol, user_id=user_id)
+        
+        if data:
+            userLogin = {
+                "id": data.id,
+                "username": data.username,
+                "rol": data.rol,
+                "name": data.name,
+                "lastname": data.lastname,
+                "color": data.color,
+                "avatar": data.avatar,
+                "letters":data.init_letters()
+            }
+
+            emit('user_data', userLogin, broadcast=True, namespace='/')
+            return jsonify({"error": "rol actualizado"}), 201
+        else:
+            return jsonify({"error": "user not found"}), 404       
 
     
+
+
+
+
 
 
 

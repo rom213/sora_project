@@ -44,6 +44,7 @@ def root():
 @login_required
 def index():
     allPsy=ModelUser.allPsychologyUsers(user_id=current_user.id, rol= current_user.rol)
+    toato=ModelUser.allUsersByToaTo(user_id=current_user.id)
     messages=ModelMessageGroup.all()
     userLogin = {
                 "id": current_user.id,
@@ -55,7 +56,7 @@ def index():
                 "avatar": current_user.avatar,
                 "letters":current_user.init_letters()
             }
-    return render_template("index.html", messages=messages, psychology=allPsy, userLogin=userLogin)
+    return render_template("index.html", messages=messages, psychology=allPsy, userLogin=userLogin, toato=toato)
 
 # Inicializa Blueprints y eventos de SocketIO
 init_app(app, socketio)

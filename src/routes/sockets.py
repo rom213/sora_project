@@ -32,9 +32,10 @@ def register_socketio_events(socketio_instance):
     def handle_message_psi(data):
         if current_user.is_authenticated:
             conexion_id = data.get('conexion_id')
+            conexion_type=data.get('conexion_type')
             
             if not conexion_id:
-                conexion = ModelConexion.create(user_id2=data.get('user_id'))
+                conexion = ModelConexion.create(user_id2=data.get('user_id'), conexion_type=conexion_type)
                 if conexion:
                     conexion_id = conexion.id
 
@@ -53,6 +54,46 @@ def register_socketio_events(socketio_instance):
         else:
             print("Anonymous user sent a message")
 
+    @socketio.on('message_toato')
+    def handle_message_toato(data):
+        if current_user.is_authenticated:
+            conexion_type=data.get('conexion_type')
+            conexion_id = data.get('conexion_id')
+            
+            if not conexion_id: 
+                conexion=ModelConexion.findConexion(user_id=data.get('user_id'), type_conexion=conexion_type);
+                
+
+                if conexion:
+                    conexion_id=conexion.id
+                if not conexion:
+                    conexion = ModelConexion.create(user_id2=data.get('user_id'), conexion_type=conexion_type)
+                    if conexion:
+                        conexion_id = conexion.id
+
+            
+            messages=ModelMessage.createToato(message=data.get('message'), conexion_id=conexion_id)
+
+            if messages:
+                first_user = messages[0]
+                if current_user.id == first_user.get('userLoginId'):
+                    emit('message_toato', messages, broadcast=True)
+                    
+                
+                messages=ModelUser.allUsersByToaTo(user_id=data.get('user_id'))
+                emit('message_toato', messages, broadcast=True)
+        else:
+            print("Anonymous user sent a message")
+
+
+
+    
+    
+    
+    
+    
+    
+    
     @socketio.on('read_message')
     def read_message(data):
         if current_user.is_authenticated:

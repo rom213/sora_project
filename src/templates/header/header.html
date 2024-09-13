@@ -1,5 +1,5 @@
 
-<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center px-6 sm:px-12 pb-3">
+<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center pr-6 lg:px-12  pb-3">
 
   <audio id="miAudio" src="../../static/sound/mixkit-long-pop-2358.mp3"></audio>
   <div
@@ -28,10 +28,18 @@
     </button>
 
 
+    <button
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='toato'}]"
+      @click="toogleNvigate('toato')"
+    >
+      Chats
+      <div v-if="countMessages.toato!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.toato"></div> 
+    </button>
+
 
     <button
     v-if="userLogin.rol==='admin'"
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='psi'}]"
+    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='admin'}]"
       @click="toogleNvigate('admin')"
     >
       Permissions
@@ -39,7 +47,7 @@
   </div>
 
   <div class="flex sm:gap-6 items-center">
-    <h2 class="text-xs sm:text-xl uppercase font-semibold text-white text-center pt-2 grid">
+    <h2 class="text-xs sm:text-xl uppercase font-semibold text-white text-center pt-2 grid hidden sm:block">
         <div class="flex gap-1"><div class="text-red-400" v-if="userLogin.rol==='admin'">AD </div><div v-if="userLogin.rol==='psi'">ps </div> {{ current_user.name }} {{ current_user.lastname }} </div> 
         <div class="font-thin text-sm">id: {{current_user.iuud}} </div>
     </h2>

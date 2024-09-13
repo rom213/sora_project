@@ -83,6 +83,9 @@ class User(UserMixin, db.Model):
             "lastname": self.lastname,
             "color": self.color,
             "iuud": self.iuud,
+            "messages":[],
             "anonymous_user": self.anonymous_user,
             "avatar": self.avatar,
+            "letter":self.init_letters(),
+            "fullname":self.name + ' ' + self.lastname
         }
