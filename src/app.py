@@ -51,10 +51,12 @@ def index():
                 "username": current_user.username,
                 "rol": current_user.rol,
                 "name": current_user.name,
+                "iuud": current_user.iuud,
                 "lastname": current_user.lastname,
                 "color": current_user.color,
                 "avatar": current_user.avatar,
-                "letters":current_user.init_letters()
+                "letters":current_user.init_letters(),
+                "anonymous_user":current_user.anonymous_user
             }
     return render_template("index.html", messages=messages, psychology=allPsy, userLogin=userLogin, toato=toato)
 

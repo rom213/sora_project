@@ -52,6 +52,42 @@ def register():
 
     return render_template('auth/register.html')
 
+
+@users_bp.route('/update', methods=['GET','POST'])
+@login_required
+def update():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        lastname = request.form.get('lastname')
+        anonymous_user=request.form.get('anonymous_user')
+        avatar = request.files.get('avatar')
+
+
+        user =ModelUser.get_by_id(current_user.id);
+
+        avatar_filename = None
+        if avatar and avatar.filename != '':
+            if allowed_file(avatar.filename):
+                avatar_filename = save_avatar(avatar)
+
+        if avatar_filename:
+            user.avatar=avatar_filename
+        user.name=name
+        user.lastname=lastname
+        user.anonymous_user=anonymous_user
+
+        try:
+            db.session.commit()
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating user: {str(e)}')
+            if avatar_filename:
+                delete_avatar(avatar_filename)
+            return render_template('auth/register.html')
+
+    return render_template('auth/register.html')
+
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

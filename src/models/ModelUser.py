@@ -26,7 +26,11 @@ class ModelUser:
             db.session.add(user)
             db.session.commit()
         except Exception as exc:
-            raise Exception(exc)
+            raise Exception(exc)    
+    
+    
+        
+    
         
     @classmethod
     def allUsers(cls):
@@ -51,6 +55,9 @@ class ModelUser:
                     if conexion.user_id2 != user_id:
                         user = User.query.filter(User.id == conexion.user_id2).first()
                     if conexion.user_id != user_id:
+                        user = User.query.filter(User.id == conexion.user_id).first()
+
+                    if conexion.user_id == user_id and conexion.user_id2==user_id:
                         user = User.query.filter(User.id == conexion.user_id).first()
                     
 
@@ -98,20 +105,16 @@ class ModelUser:
     def allPsychologyUsers(cls, user_id, rol):
         try:
             if rol == 'psi':
-                conexions = Conexion.query.filter(and_(
-                    or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id),
-                    Conexion.conexion_type == 'psi')).all()
+                conexions = Conexion.query.filter(and_(or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id), Conexion.conexion_type=='psi')).all()
                 result = []
 
                 for conexion in conexions:
                     countMessage=0
                     mesagges_tem = Message.query.filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
                     user = {}
-                    if conexion.user_id2 != user_id:
-                        user = User.query.filter(User.id == conexion.user_id2).first()
+
                     if conexion.user_id != user_id:
                         user = User.query.filter(User.id == conexion.user_id).first()
-                    
 
                     mesagges = []
                     fullname = user.name + ' ' + user.lastname
@@ -129,6 +132,7 @@ class ModelUser:
                             if message.user_id !=user_id and message.readmessage==0:
                                 countMessage=countMessage+1
                     
+                    print(countMessage)
  
                     
                     result.append({
@@ -143,7 +147,8 @@ class ModelUser:
                         'color': user.color,
                         'letter': user.init_letters(),
                         'messages': mesagges,
-                        'countMessage':countMessage
+                        'countMessage':countMessage,
+                        'anonymous_user':user.anonymous_user
                     })
                 
                 # Ordenar por el último mensaje o conexión
@@ -161,7 +166,10 @@ class ModelUser:
                     letters = user.first_letter() + user.first_letter_of_lastname()
                     fullname = user.name + ' ' + user.lastname
 
-                    conexion = db.session.query(Conexion).filter(and_(or_(Conexion.user_id2 == user.id, Conexion.user_id == user_id), Conexion.conexion_type == 'psi')).first()
+                    conexion = db.session.query(Conexion).filter(
+                        Conexion.user_id2 == user.id,
+                        Conexion.user_id == user_id
+                    ).first()
 
                     mesagges_tem = []
                     mesagges = []
@@ -183,8 +191,7 @@ class ModelUser:
                                 countMessage=countMessage+1
                         
                     conexion_id = conexion.id if conexion else None
-
-                    
+                    print(countMessage)
                     result.append({
                         'id': user.id,
                         'username': user.username,
@@ -206,9 +213,11 @@ class ModelUser:
                 )                
             
                 return result
+
+
         except Exception as exc:
             raise Exception(exc) 
-
+   
 
         
 

@@ -5,8 +5,9 @@
                 class="flex cursor-pointer gap-2 items-center bg-blue-300 md:text-2xl md:min-h-12 py-2 px-1 rounded-xl px2">
                 <div v-html="psychologyMessage.letter" :class="[' w-10 h-10  md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
                     :style="{backgroundColor:psychologyMessage.color}"></div>
-                Ps
-                <p v-html="psychologyMessage.fullname"></p>
+                <p v-if="psychologyMessage.rol==='psi'">Ps</p>
+                <p  v-if="psychologyMessage.rol==='psi'" v-html="psychologyMessage.fullname"></p>
+                <p  v-if="psychologyMessage.rol==='user'" v-html="psychologyMessage.anonymous_user"></p>
             </div>
         </div>
     </div>
