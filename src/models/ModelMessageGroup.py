@@ -15,7 +15,7 @@ class ModelMessageGroup:
 
             for message, user in messages:
                 
-                letters= user.first_letter() + user.first_letter_of_lastname()
+                avatar= user.get_avatar()
 
                 result.append({
                     'id': message.id,
@@ -24,7 +24,7 @@ class ModelMessageGroup:
                     'name': user.name,
                     'user_id': user.id,
                     'rol':user.rol,
-                    'letters':letters,
+                    'avatar':avatar,
                     'color':user.color
                 })
             return result

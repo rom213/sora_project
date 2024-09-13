@@ -71,8 +71,14 @@ class User(UserMixin, db.Model):
     
     def init_letters(self):
         first = self.first_letter()
-        last = self.first_letter_of_lastname()
+        last = self.first_letter_of_lastname()  
         return f"{first}{last}" if first and last else None
+    
+    def get_avatar(self):
+        archivo = self.avatar if self.avatar else "default_avatar.png"
+        return archivo  # Si no tiene avatar, devuelve uno por defecto.
+
+    
     
     def to_dict(self):
         return {
@@ -86,3 +92,4 @@ class User(UserMixin, db.Model):
             "anonymous_user": self.anonymous_user,
             "avatar": self.avatar,
         }
+    

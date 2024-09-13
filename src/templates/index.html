@@ -1,6 +1,6 @@
 {% extends 'layout_message.html' %}
 
-{% block titles %} Chat App {% endblock %}
+{% block titles %} UnityChat {% endblock %}
 
 {% block body %}
 <div class="" id="app">
@@ -24,7 +24,7 @@
     </div>
 
     <div v-if="navi === 'admin'" class="bg-[#A5D2FF] w-full h-screen pt-[70px] ">
-        <div class="bg-red-100 px-1 sm:px-8 h-full pb-2 rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
+        <div class="bg-red-100 px-1 sm:px-8 h-full  rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
             {% include 'admin/permissions/permissions.html' %}
         </div>
     </div>
@@ -48,7 +48,6 @@
             })
 
             const sidebarPsych = ref(false)
-
 
             const psychologyMessage = ref(null)
             const message = ref('');
@@ -82,6 +81,43 @@
                 '🚂', '🚃', '🚁', '🛳', '🚢', '🚤', '⛵', '🚲',
                 '🎤', '🎸', '🎺', '🎻', '🥁', '🎷', '🎧', '🎼',
             ]);
+
+
+
+            let indexMessagePys = null
+            let actionBeggin = true
+
+            function updateMessageCountPsi() {
+                if (psych.value) {
+                    psych.value.forEach(conexion => {
+                        if (actionBeggin) {
+                            countMessages.value.psi = countMessages.value.psi + conexion.countMessage
+                        }
+                        else {
+                            if (conexion.countMessage !== 0) {
+                                countMessages.value.psi = countMessages.value.psi + 1
+                                reproducirAudio()
+                            }
+                        }
+                        actionBeggin = false
+                    }
+                    )
+                }
+
+            }
+
+            watch(psych, updateMessageCountPsi, { immediate: true });
+            watch(userLogin, () => {
+                if (userLogin.value.rol === 'admin') {
+                    navi.value = 'admin'
+                }
+            }, { immediate: true });
+
+
+
+
+
+
 
 
             toogleSidebarPsi = () => {
@@ -136,7 +172,6 @@
                 if (message.value && navi.value === 'psi') {
 
                     data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
-                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
                     socket.value.emit('message_psi', data)
                     message.value = '';
                 }
@@ -159,8 +194,6 @@
                         countMessages.value.group = countMessages.value.group + 1
                         reproducirAudio()
                     }
-
-
                     messages.value.push(data[data.length - 1]);
                 });
 
@@ -169,10 +202,17 @@
 
                 socket.value.on('message_psi', (data) => {
                     if (data[0].userLoginId === userLogin.value.id) {
-                    if (data[0].userLoginId === userLogin.value.id) {
                         if (indexMessagePys !== null) {
                             psychologyMessage.value = data.find(item => item.id === indexMessagePys);
+
+                            psychologyMessage.value.countMessage = 0
+
+                            data_env = { message: message.value, conexion_id: psychologyMessage.value.conexion_id, user_id: psychologyMessage.value.id, rol: psychologyMessage.value.rol }
+
+                            socket.value.emit('read_message', data_env)
                         }
+
+
                         psych.value = data
                     }
 
@@ -185,21 +225,32 @@
 
             //////////////////functions admin user////////////////////////////
 
-            const idUserAdminForm = ref(null)
-            const userData = ref(null);
+            const idUserAdminForm = ref(242149927647187)
+            const userDataSearch = ref(null);
 
             watch(idUserAdminForm, async (newValue) => {
-                if (newValue !== null) { // Verifica si el ID es válido
-                    try {
-                        const response = await axios.get(`https://jsonplaceholder.typicode.com/users/${newValue}`);
-                        userData.value = response.data;
-                    } catch (error) {
-                        console.error('Error al obtener los datos del usuario:', error);
+                if (newValue !== null) {
+                    if (newValue.length === 15) { // Verifica si el ID es válido
+                        try {
+                            const response = await axios.get('http://192.168.1.100:5006/users/${newValue}');
+                            userDataSearch.value = response.data;
+                            console.log(userDataSearch.value);
+                        } catch (error) {
+                            console.error('Error al obtener los datos del usuario:', error);
+                        }
+                    }else{
+                        userDataSearch.value=null
                     }
-                } else {
-                    userData.value = null; // Reinicia userData si el ID es inválido
+
+                    if (newValue.length===0) {
+                        idUserAdminForm.value=null
+                    }
                 }
+
             }, { immediate: true });
+
+
+
 
 
 
@@ -232,7 +283,8 @@
                 sidebarPsych,
                 toogleSidebarPsi,
 
-                idUserAdminForm
+                idUserAdminForm,
+                userDataSearch
 
             };
         }

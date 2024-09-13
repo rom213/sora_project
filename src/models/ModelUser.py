@@ -60,7 +60,7 @@ class ModelUser:
                                 'message': message.message,
                                 'user_id': message.user_id,
                                 'conexion_id': message.conexion_id,
-                                'letters': user.init_letters()
+                                'letters': user.init_letters(),
                             })
                             if message.user_id !=user_id and message.readmessage==0:
                                 countMessage=countMessage+1

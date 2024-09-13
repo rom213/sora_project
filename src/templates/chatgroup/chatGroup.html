@@ -9,7 +9,7 @@
                 <div v-if="!({{current_user.id}} === msg.user_id)"
                     class="rounded-full h-12 w-12 md:h-16 md:w-16 flex-shrink-0 bg-red-200 flex items-center justify-center"
                     :style="{backgroundColor:msg.color}">
-                    <div class="md:text-3xl font-bold text-white" v-html="msg.letters"></div>
+                    <img :src="`../../static/uploads/${msg.avatar}`" alt="img" srcset="" class="h-16 w-16 rounded-full">
                 </div>
                 <div> 
 
@@ -17,12 +17,18 @@
                 <div class="px-4 bg-[#CEE8FF] rounded-lg flex items-center relative max-w-[200px] md:max-w-[500px]">
                     <p v-html="msg.message" class="md:text-3xl text-lg break-words overflow-hidden whitespace-normal"></p>
                 </div>
-                <div v-if="{{current_user.id}} === msg.user_id"
+                <div v-if="({{current_user.id}} === msg.user_id)"
                     class="rounded-full h-12 w-12 md:h-16 md:w-16  flex-shrink-0 bg-red-200 flex items-center justify-center"
-                    :style="{backgroundColor:msg.color}"
-                    >
-                    <div class="md:text-3xl font-bold text-white" v-html="msg.letters"></div>
+                    :style="{backgroundColor:msg.color}">
+                    <div class="flex items-center justify-center rounded-full w-16 h-16 relative">
+                        <img v-if="msg.avatar" :src="'../../../static/uploads/' + msg.avatar" alt="avatar"
+                            class="w-full h-full object-cover rounded-full">
+                        <span v-if="!msg.avatar" class=" font-extrabold text-xl" v-html="msg.avatar">
+                        </span>
+        
+                    </div>
                 </div>
+                
             </div>
         </div>
 

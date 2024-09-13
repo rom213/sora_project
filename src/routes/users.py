@@ -103,3 +103,9 @@ def delete_avatar(filename):
     avatar_path = os.path.join(app_config.UPLOAD_FOLDER, filename)
     if os.path.exists(avatar_path):
         os.remove(avatar_path)
+
+
+
+
+
+
