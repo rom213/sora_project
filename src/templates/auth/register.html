@@ -40,13 +40,12 @@
                     name="lastname" required>
             </div>
             <div class="grid group">
-                <label for="profile picture"
-                    class="text-[#000000a6] pl-10 font-normal hidden group-focus-within:block">profile picture</label>
                 <div class="bg-[#eaf5ff] rounded-lg h-12 mx-[30px] pl-3 flex justify-start items-center">
-                    <input type="file" name="avatar" id="avatar" accept="image/*" />
+                    <span id="fileLabel" style="color: blue; cursor: pointer;">Select picture</span>
+                    <input type="file" name="avatar" id="avatar" accept="image/*" style="display: none;" />
                 </div>
             </div>
-
+            
 
             <div class="grid group">
                 <label for="anonymous_user"
@@ -73,6 +72,14 @@
 
         </div>
     </form>
+    <script>
+        const fileInput = document.getElementById('avatar');
+        const fileLabel = document.getElementById('fileLabel');
+    
+        fileLabel.addEventListener('click', function() {
+            fileInput.click();
+        });
+    </script>
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
