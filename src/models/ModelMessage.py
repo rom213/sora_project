@@ -38,7 +38,7 @@ class ModelMessage:
     @classmethod
     def delete(cls, message_id):
         try:
-            delete = db.session.query(Message).filter_by(Message.id == message_id).first()
+            delete = Message.query.filter(Message.id==message_id).first()
             
             if delete:
                 db.session.delete(delete)
@@ -55,9 +55,9 @@ class ModelMessage:
     @classmethod
     def update(cls, message_id, new_message):
         try:
-            edit = db.session.query(Message).filter_by(id == message_id).first()
+            edit = Message.query.filter(Message.id==message_id).first()
             if edit:
-                edit.message_id= new_message
+                edit.message= new_message
                 db.session.commit()
                 return True
             

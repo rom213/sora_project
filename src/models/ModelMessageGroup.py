@@ -22,6 +22,7 @@ class ModelMessageGroup:
                     'message': message.message,
                     'username': user.username,
                     'name': user.name,
+                    'avatar':user.avatar,
                     'user_id': user.id,
                     'rol':user.rol,
                     'letters':letters,
@@ -34,10 +35,11 @@ class ModelMessageGroup:
     @classmethod
     def update(cls, message_id, new_message):
         try:
-            Group_messages = db.session.query(Group_message).filter_by(id=message_id).first()
-            if Group_messages:
-                Group_messages.message = new_message
-                Group_messages.update_at = datetime.utcnow()
+            group_messages = Group_message.query.filter(Group_message.id==message_id).first()
+            print(group_messages)
+            if group_messages:
+                group_messages.message = new_message
+                group_messages.update_at = datetime.utcnow()
                 db.session.commit()
                 return True
             
@@ -67,10 +69,10 @@ class ModelMessageGroup:
     @classmethod
     def delete(cls, message_id):
         try:
-            Group_message = db.session.query(Group_message).filter_by(id=message_id).first()
+            group_message = Group_message.query.filter(Group_message.id==message_id).first()
 
-            if Group_message:
-                db.session.delete(Group_message)
+            if group_message:
+                db.session.delete(group_message)
                 db.session.commit()
                 return True
             

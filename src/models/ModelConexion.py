@@ -2,6 +2,7 @@ from .entities.Conexion import Conexion
 from sqlalchemy.exc import SQLAlchemyError
 from flask_login import current_user
 from sqlalchemy import or_, and_
+from datetime import datetime
 
 from . import db
 
@@ -19,7 +20,7 @@ class ModelConexion:
         try:
             user_id_loggout=current_user.id
 
-            conexion_user = Conexion.query.filter(and_(or_(and_(Conexion.user_id==user_id_loggout, Conexion.user_id2==user_id),and_(Conexion.user_id==user_id, Conexion.user_id2==user_id_loggout)), Conexion.conexion_type==type_conexion)).first()
+            conexion_user = Conexion.query.filter(and_(or_(and_(Conexion.user_id==user_id_loggout, Conexion.user_id2==user_id),and_(Conexion.user_id==user_id, Conexion.user_id2==user_id_loggout)), Conexion.conexion_type==type_conexion, Conexion.delete_at==None)).first()
 
 
             return conexion_user if conexion_user else None
@@ -42,11 +43,11 @@ class ModelConexion:
     @classmethod
     def delete(cls, id_conexion):
         try:
-            conexion=Conexion.query.filter_by(id=id_conexion).first()
+            conexion=Conexion.query.filter(Conexion.id==id_conexion).first()
             if not conexion:
                 raise Exception("Connection record not found")
-            
-            db.session.delete(conexion)
+            conexion.delete_at=datetime.utcnow()
+
             db.session.commit()
             return True;
         except SQLAlchemyError as exc:
