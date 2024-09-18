@@ -89,7 +89,8 @@ class User(UserMixin, db.Model):
 
     @classmethod
     def check_password(cls, hashed_password, password):
-        return bcrypt.check_password_hash(hashed_password, password)
+        return check_password_hash(hashed_password, password)
+
 
     @classmethod
     def get_by_id(cls, id):
