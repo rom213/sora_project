@@ -9,7 +9,6 @@ from itsdangerous import URLSafeTimedSerializer
 from flask_bcrypt import Bcrypt
 
 # Crear instancias de las extensiones
-db = SQLAlchemy()
 
 bcrypt = Bcrypt()
 mysql = MySQL()

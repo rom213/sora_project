@@ -7,7 +7,6 @@ from routes import init_app, register_socketio_events
 from models.ModelMessageGroup import ModelMessageGroup
 from flask_login import current_user, login_required
 from extensions import (
-    db,
     mysql,
     login_manager_app,
     mail,
