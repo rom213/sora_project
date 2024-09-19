@@ -58,8 +58,8 @@
       <span class="text-white font-extrabold text-xl" v-html="userLogin.letters">
       </span>
       {% endif %}
-      <div class="absolute m -bottom-1 -left-1">
-        <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <div class="absolute  -bottom-1 -left-1">
+        <svg v-if="userLogin.rol==='psi' || userLogin.rol==='admin'" width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <rect width="23" height="24" fill="url(#pattern0_127_82)"/>
           <defs>
           <pattern id="pattern0_127_82" patternContentUnits="objectBoundingBox" width="1" height="1">
