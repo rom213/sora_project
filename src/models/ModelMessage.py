@@ -101,3 +101,18 @@ class ModelMessage:
             
         except Exception as e:
             raise e
+        
+    @classmethod
+    def createToato(cls, message, conexion_id):
+        try:
+            user_id = current_user.id
+
+            message = Message(message=message, user_id=user_id, conexion_id=conexion_id)
+            
+            db.session.add(message)
+            db.session.commit()
+            
+            return ModelUser.allUsersByToaTo(user_id=user_id)
+            
+        except Exception as e:
+            raise e

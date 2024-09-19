@@ -1,6 +1,7 @@
 from .entities.Conexion import Conexion
 from sqlalchemy.exc import SQLAlchemyError
 from flask_login import current_user
+from sqlalchemy import or_, and_
 
 from . import db
 
@@ -14,10 +15,22 @@ class ModelConexion:
             raise Exception(exc)
         
     @classmethod
-    def create(cls, user_id2):
+    def findConexion(cls, user_id, type_conexion):
+        try:
+            user_id_loggout=current_user.id
+
+            conexion_user = Conexion.query.filter(and_(or_(and_(Conexion.user_id==user_id_loggout, Conexion.user_id2==user_id),and_(Conexion.user_id==user_id, Conexion.user_id2==user_id_loggout)), Conexion.conexion_type==type_conexion)).first()
+
+
+            return conexion_user if conexion_user else None
+        except Exception as exc:
+            raise Exception(exc)
+        
+    @classmethod
+    def create(cls, user_id2, conexion_type):
         try:
             user_id= current_user.id
-            conexion = Conexion(user_id2=user_id2, user_id=user_id)
+            conexion = Conexion(user_id2=user_id2, user_id=user_id, conexion_type=conexion_type)
             db.session.add(conexion)
             db.session.commit()
 

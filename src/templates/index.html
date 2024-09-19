@@ -24,10 +24,19 @@
     </div>
 
     <div v-if="navi === 'admin'" class="bg-[#A5D2FF] w-full h-screen pt-[70px] ">
-        <div class="bg-red-100 px-1 sm:px-8 h-full  rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
+        <div class="bg-red-100 px-1 sm:px-8 h-full rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
             {% include 'admin/permissions/permissions.html' %}
         </div>
     </div>
+
+
+    <div v-if="navi === 'toato'" class="bg-[#A5D2FF] w-full h-screen pt-[70px] ">
+        <div class="bg-red-100 px-1 sm:px-8 h-full rounded-lg  pt-2 relative z-20 w-full flex justify-center pb-5">
+            {% include 'toato/toato.html' %}
+        </div>
+    </div>
+
+
 
 
 </div>
@@ -41,15 +50,23 @@
             const socket = ref(null);
             const messages = ref(JSON.parse('{{ messages |tojson | safe }}'));
             const psych = ref(JSON.parse('{{ psychology | tojson | safe }}'));
+            const toato = ref(JSON.parse('{{ toato | tojson | safe }}'));
+
+
             const userLogin = ref(JSON.parse('{{ userLogin |tojson | safe }}'));
             const countMessages = ref({
                 'group': 0,
-                'psi': 0
+                'psi': 0,
+                'toato': 0
             })
 
+            const userToato = ref(null);
+
             const sidebarPsych = ref(false)
+            const sidebarToaTo = ref(false)
 
             const psychologyMessage = ref(null)
+            const psychologyMessageToaTo = ref(null)
             const message = ref('');
             const navi = ref('psi');
 
@@ -85,7 +102,10 @@
 
 
             let indexMessagePys = null
+            let indexMessageToato = null
+
             let actionBeggin = true
+            let actionBegginToato = true
 
             function updateMessageCountPsi() {
                 if (psych.value) {
@@ -107,6 +127,31 @@
             }
 
             watch(psych, updateMessageCountPsi, { immediate: true });
+
+
+
+            function updateMessageCountToato() {
+                if (toato.value) {
+                    toato.value.forEach(conexion => {
+                        if (actionBegginToato) {
+                            countMessages.value.toato = countMessages.value.toato + conexion.countMessage
+                        }
+                        else {
+                            if (conexion.countMessage !== 0) {
+                                countMessages.value.toato = countMessages.value.toato + 1
+                                reproducirAudio()
+                            }
+                        }
+                        actionBegginToato = false
+                    }
+                    )
+                }
+
+            }
+
+            watch(toato, updateMessageCountToato, { immediate: true });
+
+
             watch(userLogin, () => {
                 if (userLogin.value.rol === 'admin') {
                     navi.value = 'admin'
@@ -122,6 +167,10 @@
 
             toogleSidebarPsi = () => {
                 sidebarPsych.value = !sidebarPsych.value
+            }
+
+            toogleSidebarToato = () => {
+                sidebarToaTo.value = !sidebarToaTo.value
             }
 
 
@@ -142,6 +191,44 @@
                 message.value = '';
             }
 
+            const toogleNaviChatToatoFind=()=>{
+                data= toato.value.find(item => item.id === userToato.value.id);
+
+                idUserAdminForm.value=null
+                
+                if (data) {
+                    psychologyMessageToaTo.value=data
+                    indexMessageToato = userToato.value.id
+                }
+                else{
+                    psychologyMessageToaTo.value = userToato.value
+                    indexMessageToato = userToato.value.id
+                }
+                userToato.value=null
+
+
+
+
+                psychologyMessageToaTo.value.countMessage = 0
+            }
+
+            const toogleNaviChatToato = (index, id) => {
+                sidebarToaTo.value = false
+                indexMessageToato = id
+                psychologyMessageToaTo.value = toato.value[index];
+
+                if (psychologyMessageToaTo.value.countMessage !== 0) {
+
+                    data = { message: message.value, conexion_id: psychologyMessageToaTo.value.conexion_id, user_id: psychologyMessageToaTo.value.id, rol: psychologyMessageToaTo.value.rol }
+                    socket.value.emit('read_message', data)
+                    countMessages.value.toato = countMessages.value.toato - psychologyMessageToaTo.value.countMessage
+                    psychologyMessageToaTo.value.countMessage = 0
+                    message.value = '';
+
+                }
+                message.value = '';
+            }
+
 
             const toogleEmojis = () => {
                 modalEmojis.value = !modalEmojis.value
@@ -151,7 +238,13 @@
                 if (val == 'group') {
                     countMessages.value.group = 0
                     psychologyMessage.value = null
+                    psychologyMessageToaTo.value = null
+                    indexMessageToato = null
+
+                    indexMessagePys = null
                 }
+
+
                 navi.value = val
             }
 
@@ -169,10 +262,17 @@
                     message.value = '';
                 }
 
-                if (message.value && navi.value === 'psi') {
+                if (message.value && (navi.value === 'psi' || navi.value === 'toato')) {
+                    data = {}
+                    if (navi.value === 'psi') {
+                        data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol, conexion_type: 'psi' }
+                        socket.value.emit('message_psi', data)
 
-                    data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol }
-                    socket.value.emit('message_psi', data)
+                    }
+                    if (navi.value === 'toato') {
+                        data = { message: message.value, conexion_id: user.conexion_id, user_id: user.id, rol: user.rol, conexion_type: 'toato' }
+                        socket.value.emit('message_toato', data)
+                    }
                     message.value = '';
                 }
             };
@@ -198,6 +298,13 @@
                 });
 
 
+                socket.value.on('user_data', (data) => {
+                    if (userLogin.value.id === data.id) {
+                        window.location.reload()
+                    }
+                });
+
+
 
 
                 socket.value.on('message_psi', (data) => {
@@ -215,9 +322,24 @@
 
                         psych.value = data
                     }
+                });
 
 
+                socket.value.on('message_toato', (data) => {
+                    if (data[0].userLoginId === userLogin.value.id) {
+                        if (indexMessageToato !== null) {
+                            psychologyMessageToaTo.value = data.find(item => item.id === indexMessageToato);
 
+                            psychologyMessageToaTo.value.countMessage = 0
+
+                            data_env = { message: message.value, conexion_id: psychologyMessageToaTo.value.conexion_id, user_id: psychologyMessageToaTo.value.id, rol: psychologyMessageToaTo.value.rol }
+
+                            socket.value.emit('read_message', data_env)
+                        }
+
+
+                        toato.value = data
+                    }
                 });
             });
 
@@ -225,34 +347,90 @@
 
             //////////////////functions admin user////////////////////////////
 
-            const idUserAdminForm = ref(242149927647187)
+            const idUserAdminForm = ref(null)
             const userDataSearch = ref(null);
+            const selectedRole = ref('');
+            const allUserAdminPsi = ref([])
+            const actionWatchUsersAdmin = ref(0)
 
             watch(idUserAdminForm, async (newValue) => {
                 if (newValue !== null) {
                     if (newValue.length === 15) { // Verifica si el ID es válido
                         try {
-                            const response = await axios.get('http://192.168.1.100:5006/users/${newValue}');
-                            userDataSearch.value = response.data;
-                            console.log(userDataSearch.value);
+                            const response = await axios.get(`/users/${newValue}`);
+                            if (navi.value === 'admin') {
+                                userDataSearch.value = response.data;
+                                selectedRole.value = response.data.rol
+                            }
+
+
+
+                            if (navi.value === 'toato') {
+                                userToato.value = response.data
+            
+                            }
                         } catch (error) {
                             console.error('Error al obtener los datos del usuario:', error);
                         }
-                    }else{
-                        userDataSearch.value=null
+                    } else {
+                        if (navi.value === 'admin') {
+                            userDataSearch.value = null
+                        }
+
+                        if (navi.value === 'toato') {
+                            userToato.value = null
+                        }
                     }
 
-                    if (newValue.length===0) {
-                        idUserAdminForm.value=null
+                    if (newValue.length === 0) {
+                        idUserAdminForm.value = null
                     }
                 }
 
             }, { immediate: true });
 
 
+            const submitSaveRolUser = async (user_id) => {
+                if (userDataSearch) {
+                    try {
+                        const response = await axios.post('/users/admin', {
+                            rol: selectedRole.value,
+                            user_id: user_id
+                        });
+
+                        if (response.status == 201) {
+                            actionWatchUsersAdmin.value = actionWatchUsersAdmin.value + 1
+                            idUserAdminForm.value = null
+                        }
+                    } catch (error) {
+                        console.error('Error al crear el usuario:', error);
+                    }
+                }
+            }
+
+            const submitUserSelect = (user) => {
+                idUserAdminForm.value = user.iuud
+
+
+            }
+
+            const getUsersAdmin = async () => {
+                try {
+                    const response = await axios.get(`/users/admin`);
+                    allUserAdminPsi.value = response.data
+                } catch (error) {
+                    allUserAdminPsi.value = []
+                }
+            }
+
+            watch(actionWatchUsersAdmin, async () => {
+                await getUsersAdmin()
+            }, { immediate: true });
 
 
 
+
+            ////////////////////messages to a to////////////////////////////////////////////
 
 
             return {
@@ -284,7 +462,22 @@
                 toogleSidebarPsi,
 
                 idUserAdminForm,
-                userDataSearch
+                userDataSearch,
+                submitSaveRolUser,
+                selectedRole,
+                allUserAdminPsi,
+                submitUserSelect,
+
+
+                toogleSidebarToato,
+                sidebarToaTo,
+                toogleNaviChatToato,
+                toogleNaviChatToatoFind,
+                toato,
+                psychologyMessageToaTo,
+
+                userToato
+
 
             };
         }

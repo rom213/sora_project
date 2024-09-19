@@ -1,0 +1,60 @@
+<div class="h-full bg-white rounded-xl w-full grid grid-cols-12 overflow-hidden relative">
+
+    <div class="absolute z-50 md:hidden  w-8 flex items-center justify-center bg-red-200 top-2 rounded-r-sm"
+        @click="toogleSidebarToato">
+        <svg v-if="!sidebarToaTo" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+        </svg>
+
+        <svg v-if="sidebarToaTo" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
+        </svg>
+
+
+    </div>
+
+
+    <div
+        :class="['bg-[#98A6FF] col-start-1 rounded-r-lg col-end-4 px-3 pt-2 md:p-4 absolute md:relative h-full overflow-auto flex flex-col gap-2', {'z-40':sidebarToaTo}]">
+        <form class="flex gap-3 items-center w-full" action="">
+            <div class="w-full">
+                <input v-model="idUserAdminForm" class="w-full h-12 pl-6 border border-black rounded-md outline-1"
+                    placeholder="Enter code from friend" type="text">
+            </div>
+        </form>
+
+        <div v-if="userToato" @click="toogleNaviChatToatoFind"
+            class="flex cursor-pointer gap-2 items-center bg-[#E0DAFC] md:text-2xl md:min-h-12 py-2 px-1 rounded-xl px2 ">
+            <div v-html="userToato.letter"
+                :class="['h-11 w-11 md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
+                :style="{backgroundColor:userToato.color}"></div>
+            <p v-html="userToato.fullname"></p>
+        </div>
+
+
+        <div class="grid  gap-4 relative">
+            <div v-for="ps, index in toato" :key="ps.id" @click="toogleNaviChatToato(index, ps.id)"
+                class="flex cursor-pointer gap-2 items-center bg-[#E0DAFC] md:text-2xl md:min-h-12 py-2 px-1 rounded-xl px2 ">
+                <div v-html="ps.letter"
+                    :class="['h-11 w-11 md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
+                    :style="{backgroundColor:ps.color}"></div>
+                <p v-html="ps.fullname"></p>
+
+                <div class="bg-green-500 rounded-full w-7 h-7 flex items-center text-center justify-center pb-1 text-sm relative font-semibold right-0 -top-2 lg:top-0 lg:-right-4 "
+                    v-if="ps.countMessage!=0" v-html="ps.countMessage"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="bg-blue-400 col-start-2 md:col-start-4 col-end-13 z-10">
+        <div v-if="psychologyMessageToaTo===null" class="h-full">
+            {% include 'toato/message/message.html' %}
+        </div>
+        <div v-if="psychologyMessageToaTo!==null" class="h-full">
+            {% include 'toato/chat/chat.html' %}
+        </div>
+    </div>
+</div>
