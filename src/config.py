@@ -2,15 +2,16 @@ import os
 
 
 class Config:
-    SECRET_KEY = "laila"
-    SECURITY_PASSWORD_SALT = "perra"
+    SECRET_KEY = 'laila'
+    SECURITY_PASSWORD_SALT = 'perra'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = "chatunity7@gmail.com"
-    MAIL_PASSWORD = "vncl refb besy tadl"
+    MAIL_USERNAME = 'chatunity7@gmail.com'
+    MAIL_PASSWORD = 'vncl refb besy tadl'
+    MAIL_DEFAULT_SENDER = 'chatunity7@gmail.com'
 
 
 class DevelopmentConfig(Config):

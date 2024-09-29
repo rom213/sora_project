@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from flask_login import login_user, logout_user, login_required
@@ -24,13 +24,16 @@ users_bp = Blueprint("users", __name__)
 @users_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        # Obtener los datos del formulario
         username = request.form.get("username")
         password = request.form.get("password")
         name = request.form.get("name")
         lastname = request.form.get("lastname")
         anonymous_user = request.form.get("anonymous_user")
         avatar = request.files.get("avatar")
+        email = request.form.get("email")
 
+        # Validación del avatar (si hay)
         avatar_filename = None
         if avatar and avatar.filename != "":
             if allowed_file(avatar.filename):
@@ -39,27 +42,42 @@ def register():
                 flash("Invalid file type. Only .png, .jpg, .jpeg, .gif are allowed.")
                 return render_template("auth/register.html")
 
+        # Crear el objeto User
         user = User(
             username=username,
-            password=generate_password_hash(password),
+            password=generate_password_hash(password),  
+            email = email,
             name=name,
             lastname=lastname,
             avatar=avatar_filename,
             anonymous_user=anonymous_user,
+            is_verified=False  # El usuario no está verificado hasta que confirme el email
         )
 
         try:
+            # Registrar el usuario en la base de datos
             ModelUser.register(user=user)
-            flash("User created successfully!")
+            
+            # Enviar correo de verificación
+            send_verification_email(user)
+            
+            # Mostrar mensaje para que el usuario verifique su correo
+            flash("User created successfully! Please check your email to verify your account.", "success")
             return redirect(url_for("users.login"))
+
         except Exception as e:
+            # Si ocurre un error, revertir la transacción
             db.session.rollback()
-            flash(f"Error creating user: {str(e)}")
+            flash(f"Error creating user: {str(e)}", "danger")
+            
+            # Eliminar el avatar si se había subido
             if avatar_filename:
                 delete_avatar(avatar_filename)
             return render_template("auth/register.html")
 
+    # Mostrar el formulario de registro
     return render_template("auth/register.html")
+
 
 
 @users_bp.route('/update', methods=['GET','POST'])
@@ -107,8 +125,12 @@ def login():
         logged_user = ModelUser.login(user)
 
         if logged_user and logged_user.password:
-            login_user(logged_user)
-            return redirect(url_for("index"))
+            if logged_user.is_verified:
+                login_user(logged_user)
+                return redirect(url_for("index"))
+            else:
+                flash("Please verify your account before logging in.", "warning")
+                return render_template("auth/login.html")
         else:
             flash("Invalid username or password")
             return render_template("auth/login.html")
@@ -202,12 +224,10 @@ def send_email(user):
     msg = Message(
         "Password Reset Request", recipients=[user.email], sender="MAIL_USERNAME"
     )
+    
+    msg.body = f"""To reset your password, please follow the link below:{reset_url}
 
-    msg.body = f"""To reset your password, please follow the link below:
-{reset_url}
-
-If you didn't request a password reset, please ignore this email.
-"""
+            If you didn't request a password reset, please ignore this email."""
 
     # Enviar el correo
     mail.send(msg)
@@ -261,3 +281,31 @@ def reset_token(token):
     )
 
 
+def send_verification_email(user):
+    token = user.get_token()  
+    verification_url = url_for('users.verify_email', token=token, _external=True)
+
+    msg = Message("Verify your account", recipients=[user.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
+    msg.body = f'''Welcome to our platform,
+
+Please verify your account by clicking the following link:
+{verification_url}
+
+If you did not create this account, please ignore this email.
+'''
+
+    mail.send(msg)
+
+
+
+@users_bp.route('/verify_email/<token>')
+def verify_email(token):
+    user, error = User.verify_token(token)
+    if user:
+        user.is_verified = True  
+        db.session.commit()
+        flash("Your account has been verified. You can now log in.", "success")
+        return redirect(url_for('users.login'))
+    else:
+        flash("The verification link is invalid or has expired: {error}", "danger")
+        return redirect(url_for('users.register'))

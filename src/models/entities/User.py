@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(100), nullable=True)
     group_messages = db.relationship("Group_message", backref="user", lazy=True)
     email = db.Column(db.String(120), unique=True, nullable=True)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(
         self,
@@ -35,6 +36,8 @@ class User(UserMixin, db.Model):
         lastname="",
         avatar="",
         anonymous_user="",
+        is_verified= False
+
     ):
         self.username = username
         self.password = password
@@ -46,6 +49,7 @@ class User(UserMixin, db.Model):
         self.avatar = avatar
         self.anonymous_user = anonymous_user
         self.email = email
+        self.is_verified = False
 
     def generate_user_id(self):
         code = f"{random.randint(0, 999999999999999):015d}"
