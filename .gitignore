@@ -1,24 +1,28 @@
 # Ignorar directorios de entorno virtual de Python
-.venv/
+venv/
 .env/
 
 # Ignorar archivos de caché de Python
 __pycache__/
 *.py[cod]
-
+*.pyc
 # Ignorar archivos de caché de Flask
 instance/
 .cache/
 
-# Ignorar archivos de caché de VS Code
+# Ignorar archivos de caché de otros frameworks o herramientas
 .vscode/
 .history/
-
-# Ignorar archivos de caché de otros frameworks o herramientas
 .idea/
 node_modules/
 
-# Ignorar archivos .pyc
-*.pyc
-__pycache__/
+# Ignorar archivos de caché de testing
+.pytest_cache/
 
+# Ignorar archivos temporales
+*~
+
+# Ignorar otros archivos y directorios comunes
+.DS_Store  # macOS
+Thumbs.db # Windows
+*.swp     # Vim swap files

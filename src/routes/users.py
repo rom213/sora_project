@@ -180,13 +180,6 @@ def getUsersForAdmin():
     
 
 
-
-
-
-
-
-
-
 def save_avatar(avatar):
     """Guardar el archivo de avatar en la carpeta designada."""
     avatar_filename = secure_filename(avatar.filename)
