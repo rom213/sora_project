@@ -1,75 +1,138 @@
+<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center pr-6 px-2 lg:px-12  pb-3">
 
-<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center pr-6 lg:px-12  pb-3">
+  <audio class="opacity-0 absolute" id="miAudio" autoplay>
+    <source src="{{ url_for('static', filename='sound/livechat-129007.mp3') }}" type="audio/mpeg">
+</audio>
+<button class="hidden" id="enableButton">Habilitar Notificaciones Sonoras</button>
 
-  <audio id="miAudio" src="../../static/sound/mixkit-long-pop-2358.mp3"></audio>
-  <div
-    class=" text-sm sm:text-xl font-bold  h-full flex items-center gap-2"
-  >
+  <div class=" text-sm sm:text-xl font-bold  h-full flex items-center gap-2">
     <button
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='group'}]"
-      @click="toogleNvigate('group')"
-    >
-      Chat General
+      :class="['group flex justify-center rounded-md items-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='group'}]"
+      @click="toogleNvigate('group')">
+      <svg width="76" height="68" viewBox="0 0 76 68" fill="none" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g clip-path="url(#clip0_202_5)">
+          <rect y="13" width="45" height="45" fill="url(#pattern0_202_5)" />
+          <rect x="44" y="30" width="32" height="41" fill="url(#pattern1_202_5)" />
+        </g>
+        <defs>
+          <pattern id="pattern0_202_5" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_202_5" transform="scale(0.01)" />
+          </pattern>
+          <pattern id="pattern1_202_5" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image1_202_5" transform="matrix(0.01 0 0 0.00780488 0 0.109756)" />
+          </pattern>
+          <clipPath id="clip0_202_5">
+            <rect width="76" height="68" fill="white" />
+          </clipPath>
+          <image id="image0_202_5" width="100" height="100"
+            xlink:href="data:image/png;base64,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" />
+          <image id="image1_202_5" width="100" height="100"
+            xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAADSUlEQVR4nO2cu2sUURSHN0FNFOxUMGitCHa+RU3vIwpB1MYugpBCBfVfMBoMiIVV7ARbn6VRCIJooYIPECSd0UJXYRMVPrnsFEvIzNy7u945M/l9MBC2+OXc8+3umTuzTK0mhBBCCCGEEEIIIYQQQogiAAaBER100oPBbgqZRHTKpITYQkKMISHGkJClKKQOfNJBaw/qRQrp3j+pCMTolYT4IyHGkBBjSIgxJMQYEmIMCTGGhBhDQowhIcaQEGNIiDEkxBgSYozSCQF6gd3AKHAROAmsabOulcAh4FxyHHSvtZm1FjiV1DSa1NhbaSHAfuDtIjnzwHWgPyDrDPB1kSz32khATj8wkdSwEFfrvkoKAY4Cv8nmKdDnkXWVfK54yniWk+NqHqqUEGAD8As/xnOyjuHP4Zws98nwwd2WHYjRq1hC3NeRL/NZMwV4FZD1MmdmLPY11dYbpVu9iiXkA2GcSMkZIJz1KVlugIfwPkavYglpBC7+UkrOLsLZmZJ1OTCnEaNXsYR8C1z82ZScrYSzJSXLndqGMBujV7GEPA5c/I6UnD7gR0DOd2BFSpbbZ4TwMEavYgk5HrDw11kbMuBmQNaNnA3qm4Cs4Ri9iiWkx73DPBY9D+zNyVoHzHhkfc67AuA2fR57I8c9t4YYvYq5MVwNPMg51z/imbUZ+JiR5c7qNnlmDQE/M7Luu9oD1lkOIS2flOFkpswCc8A74JrvxmvBdawLwPOkofXk7/Oh17OS0+nxpJa5pLZHSa09gVnlEbIUQEJsISHGkBBjSIgxJMQYEmIMCTGGhBhDQowhIcaQEGNIiDEkxBgSYoyihUx3+JQ573sgwJ6SPNFuukghneL12DuaC/W51WqZ8guh+dvb21SDcgsBNgIvqA7lFQIcAL5QLcophOa8+EP16KqQsQ6fGpcrBFgF3PFYWKOkT7Ebq1khT0jAvJgBthe9ntKTJSRgXky5Xy0WvZZKkNHku8BfDxnjwLKi11EZaJ8GcLro+itHmzJmgG1F115J2pAxpXlhR8gtYPn/rGfJ4ymioXkRCQ8ZmhcxyZHxRPMiMpoXxtC8MIbmhTE0L4zRsr/Q9SgLpD1MRgghhBBCCCGEEEIIUSst/wB8RvckJMuObwAAAABJRU5ErkJggg==" />
+        </defs>
+      </svg>
 
-      <div v-if="countMessages.group!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.group"></div> 
+
+
+      <div class="hidden group-hover:block absolute bottom-1 left-1 text-sm">
+        global chat
+      </div>
+
+      <div v-if="countMessages.group!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+        v-html="countMessages.group"></div>
     </button>
-<!--     <button
+    <!--     <button
       class="text-center text-white p-2  md:w-48 h-full cursor-pointer"
     >
       Chats
     </button> -->
-    <button
-    v-if="userLogin.rol!=='admin'"
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='psi'}]"
-      @click="toogleNvigate('psi')"
-    >
-      Psicologia
-      <div v-if="countMessages.psi!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.psi"></div> 
+    <button v-if="userLogin.rol!=='admin'"
+      :class="['flex group  items-center rounded-md justify-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='psi'}]"
+      @click="toogleNvigate('psi')">
+      <svg width="73" height="53" viewBox="0 0 73 53" fill="none" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="73" height="53" fill="url(#pattern0_202_3)" />
+        <defs>
+          <pattern id="pattern0_202_3" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_202_3" transform="matrix(0.00726027 0 0 0.01 0.136986 0)" />
+          </pattern>
+          <image id="image0_202_3" width="100" height="100"
+            xlink:href="data:image/png;base64,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" />
+        </defs>
+      </svg>
+
+      <div class="hidden group-hover:block absolute bottom-1 left-1 text-sm">
+        psychology
+      </div>
+
+      <div v-if="countMessages.psi!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+        v-html="countMessages.psi"></div>
     </button>
 
 
     <button
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='toato'}]"
-      @click="toogleNvigate('toato')"
-    >
-      Chats
-      <div v-if="countMessages.toato!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"  v-html="countMessages.toato"></div> 
+      :class="['flex group items-center justify-center rounded-md text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='toato'}]"
+      @click="toogleNvigate('toato')">
+      <svg width="62" height="58" viewBox="0 0 62 58" fill="none" xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="62" height="58" fill="url(#pattern0_202_4)" />
+        <defs>
+          <pattern id="pattern0_202_4" patternContentUnits="objectBoundingBox" width="1" height="1">
+            <use xlink:href="#image0_202_4" transform="matrix(0.00935484 0 0 0.01 0.0322581 0)" />
+          </pattern>
+          <image id="image0_202_4" width="100" height="100"
+            xlink:href="data:image/png;base64,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" />
+        </defs>
+      </svg>
+      <div class="hidden group-hover:block absolute bottom-1 left-1 text-sm">
+        Chats
+      </div>
+      
+
+      <div v-if="countMessages.toato!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+        v-html="countMessages.toato"></div>
     </button>
 
 
-    <button
-    v-if="userLogin.rol==='admin'"
-    :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='admin'}]"
-      @click="toogleNvigate('admin')"
-    >
+    <button v-if="userLogin.rol==='admin'"
+      :class="['text-center text-white md:w-48 h-full cursor-pointer px-2 relative', {'bg-blue-500': navi==='admin'}]"
+      @click="toogleNvigate('admin')">
       Permissions
     </button>
   </div>
 
   <div class="flex sm:gap-6 items-center">
     <h2 class="text-xs sm:text-xl uppercase font-semibold text-white text-center pt-2 grid hidden sm:block">
-        <div class="flex gap-1"><div class="text-red-400" v-if="userLogin.rol==='admin'">AD </div><div v-if="userLogin.rol==='psi'">ps</div><p v-html="userLogin.name+ ' '+ userLogin.lastname"></p> </div> 
-        <div class="font-thin text-sm" v-html="'id: '+ userLogin.iuud"></div>
+      <div class="flex gap-1">
+        <div class="text-red-400" v-if="userLogin.rol==='admin'">AD </div>
+        <div v-if="userLogin.rol==='psi'">ps</div>
+        <p v-html="userLogin.name+ ' '+ userLogin.lastname"></p>
+      </div>
+      <div class="font-thin text-sm" v-html="'id: '+ userLogin.iuud"></div>
     </h2>
-    <div @click="toogleModalUser" class="flex items-center justify-center rounded-full w-12 h-12 relative cursor-pointer">
+    <div @click="toogleModalUser"
+      class="flex items-center justify-center rounded-full w-12 h-12 relative cursor-pointer">
       {% if current_user.avatar %}
-      <img src="{{ url_for('static', filename='uploads/' + current_user.avatar) }}" alt="avatar" class="w-full h-full object-cover rounded-full" />
+      <img src="{{ url_for('static', filename='uploads/' + current_user.avatar) }}" alt="avatar"
+        class="w-full h-full object-cover rounded-full" />
       {% else %}
       <span class="text-white font-extrabold text-xl" v-html="userLogin.letters">
       </span>
       {% endif %}
-      <div class="absolute m -bottom-1 -left-1">
-        <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <rect width="23" height="24" fill="url(#pattern0_127_82)"/>
+      <div class="absolute  -bottom-1 -left-1">
+        <svg v-if="userLogin.rol==='psi' || userLogin.rol==='admin'" width="23" height="24" viewBox="0 0 23 24"
+          fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <rect width="23" height="24" fill="url(#pattern0_127_82)" />
           <defs>
-          <pattern id="pattern0_127_82" patternContentUnits="objectBoundingBox" width="1" height="1">
-          <use xlink:href="#image0_127_82" transform="matrix(0.01 0 0 0.00958333 0 0.0208333)"/>
-          </pattern>
-          <image id="image0_127_82" width="100" height="100" xlink:href="data:image/png;base64,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"/>
+            <pattern id="pattern0_127_82" patternContentUnits="objectBoundingBox" width="1" height="1">
+              <use xlink:href="#image0_127_82" transform="matrix(0.01 0 0 0.00958333 0 0.0208333)" />
+            </pattern>
+            <image id="image0_127_82" width="100" height="100"
+              xlink:href="data:image/png;base64,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" />
           </defs>
-          </svg>
-          
-          
+        </svg>
+
+
       </div>
     </div>
   </div>

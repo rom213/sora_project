@@ -1,12 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models.ModelConexion import ModelConexion
-from models.entities.User import User
-from flask_login import current_user
-from models import db
+from flask_login import current_user, login_required
 
 conexion_bp = Blueprint('conexion', __name__)
 
-@conexion_bp.route('/all')
+@conexion_bp.route('/all', methods=['POST'])
+@login_required
 def all():
     if request.method == 'POST':
         user_id = current_user.id

@@ -76,8 +76,8 @@
                 </div>
             </div>
             <div class="cursor-pointer flex" @click="toogleModalEditUser">
-                <svg class="hover:scale-125 " width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                <svg class="hover:scale-125 " width="50" height="50" viewBox="0 0 50 50" fill="none"
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <rect width="50" height="50" fill="url(#pattern0_186_7)" />
                     <defs>
                         <pattern id="pattern0_186_7" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -275,7 +275,7 @@
             const psychologyMessage = ref(null)
             const psychologyMessageToaTo = ref(null)
             const message = ref('');
-            const navi = ref('psi');
+            const navi = ref('toato');
 
 
             const modalEmojis = ref(false);
@@ -315,12 +315,18 @@
             let actionBegginToato = true
 
             function updateMessageCountPsi() {
+                const count = countMessages.value.psi
                 countMessages.value.psi = 0
                 if (psych.value) {
                     psych.value.forEach(conexion => {
                         countMessages.value.psi = countMessages.value.psi + conexion.countMessage
                     }
                     )
+
+                    if (countMessages.value.psi > count) {
+                        reproducirAudio()
+                    }
+
                 }
 
             }
@@ -331,11 +337,18 @@
 
             function updateMessageCountToato() {
                 if (toato.value) {
+                    const count = countMessages.value.toato
                     countMessages.value.toato = 0
                     toato.value.forEach(conexion => {
                         countMessages.value.toato = countMessages.value.toato + conexion.countMessage
                     }
                     )
+
+                    if (countMessages.value.toato > count) {
+                        reproducirAudio()
+                    }
+
+
                 }
 
             }
@@ -482,14 +495,16 @@
                     message.value = '';
                 }
             };
-
             function reproducirAudio() {
                 const audio = document.getElementById('miAudio');
-
-                audio.play().catch(error => {
-                    console.error("Error al reproducir el audio:", error);
-                });
+                console.log(audio);
+                if (audio) {
+                    audio.play()
+                } else {
+                    console.error("No se encontró el elemento de audio en el HTML.");
+                }
             }
+
 
             onMounted(() => {
                 socket.value = io.connect();
@@ -692,6 +707,143 @@
 
             }
 
+            ///////////////////states/////////////////////////
+            const fileInput = ref(null); // Referencia al input de archivos
+            const selectedImage = ref(null); // Almacena la imagen seleccionada
+            const fileImg = ref(null)
+            const titleState = ref(null)
+            const statesToaTo = ref(null)
+            const showStates = ref(null)
+            const carrusel = ref(null)
+            const progress = ref(0);
+
+
+
+            const animateProgress = (duration, updateCallback) => {
+                return new Promise((resolve) => {
+                    let start = null;
+                    const animate = (timestamp) => {
+                        if (!start) start = timestamp;
+                        const elapsed = timestamp - start;
+                        let progressValue = Math.min((elapsed / duration) * 100, 100); // Calcula el progreso entre 0 y 100
+
+                        updateCallback(progressValue); // Llamamos al callback para actualizar el valor de progreso
+
+                        if (elapsed < duration) {
+                            requestAnimationFrame(animate); // Continuamos la animación
+                        } else {
+                            resolve(); // Finalizamos cuando el progreso llega a 100
+                        }
+                    };
+                    requestAnimationFrame(animate);
+                });
+            };
+
+            const haddleGetStates = async () => {
+                try {
+                    const response = await axios.get(`/states/all`);
+                    if (response.status == 200) {
+                        statesToaTo.value = response.data
+                    }
+                    if (response.status == 404) {
+                        statesToaTo.value = null
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+
+            let cancelToken = null;
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+
+            const handleShowStates = async (data) => {
+                const currentToken = Symbol();
+                cancelToken = currentToken;
+
+                showStates.value = data;
+
+                for (const element of showStates.value[1]) {
+                    if (cancelToken !== currentToken) {
+                        break;
+                    }
+                    carrusel.value = element;
+                    await animateProgress(3000, (progressValue) => {
+                        progress.value = progressValue; // Actualizamos el progreso en la interfaz
+                    });
+                }
+                if (cancelToken === currentToken) {
+                    carrusel.value = null;
+                    showStates.value = null;
+                }
+            };
+
+
+
+            onMounted(() => {
+                haddleGetStates();
+                socket.value.on('update_states', (data) => {
+                    haddleGetStates();
+                });
+
+            });
+
+
+
+            const selectImage = () => {
+                fileInput.value.click();
+            };
+
+            const onFileSelected = (event) => {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    // Crear un URL para la imagen seleccionada
+                    fileImg.value = file
+                    selectedImage.value = URL.createObjectURL(file);
+                } else {
+                    alert('Por favor, selecciona una imagen válida.');
+                }
+            };
+
+            const closeModalStateCreate = () => selectedImage.value = null
+
+            const sendState = async () => {
+                try {
+                    const formData = new FormData();
+                    formData.append("image", fileImg.value);
+                    formData.append("title", titleState.value);
+
+
+                    const response = await axios.post('/states/save', formData);
+                    if (response.status == 200) {
+                        selectedImage.value = null
+                        titleState.value = null
+                        haddleGetStates()
+                    }
+                } catch (error) {
+                    console.error('Error al subir la imagen', error);
+                }
+            }
+
+            const componet_states = {
+                fileInput,
+                titleState,
+                selectedImage,
+                selectImage,
+                onFileSelected,
+                closeModalStateCreate,
+                sendState,
+                statesToaTo,
+                handleShowStates,
+                showStates,
+                carrusel,
+                progress
+            }
+
+
+
+
+
             return {
                 userLogin,
 
@@ -749,8 +901,10 @@
 
                 toogleModalEditMessage,
                 messageEdit,
-                saveMessage
+                saveMessage,
 
+
+                ...componet_states
 
             };
         }
