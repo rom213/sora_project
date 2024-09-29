@@ -13,9 +13,7 @@ class ModelUser:
     def login(cls, user):
         try:
             found_user = User.query.filter_by(username=user.username).first()
-            print(found_user.password)
-            print(user.password)
-
+            
             if found_user and User.check_password(found_user.password, user.password):
                 return found_user
             else:
