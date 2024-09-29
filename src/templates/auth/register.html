@@ -10,6 +10,19 @@
         <div class="flex justify-center items-center  mb-3 mt-2">
             <h1 class="text-[#4d94ff] text-5xl font-serif">Register</h1>
         </div>
+
+        {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <br>
+    {% for message in messages %}
+    <div class="alert alert-primary alert-dismissible text-red-600" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
         <div class="grid gap-2">
             <div class="grid group">
                 <label for="username"
@@ -89,18 +102,6 @@
             fileInput.click();
         });
     </script>
-
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <br>
-    {% for message in messages %}
-    <div class="alert alert-primary alert-dismissible" role="alert">
-        <strong>{{ message }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
 
 </div>
 {% endblock %}

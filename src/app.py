@@ -1,5 +1,7 @@
 # app.py
 from flask import Flask, render_template, redirect, url_for
+
+
 from config import config
 from models import db  # Importa db desde models/__init__.py
 from models.ModelUser import ModelUser
@@ -12,12 +14,12 @@ from extensions import (
     mail,
     socketio,
     bcrypt,
-)  # Importar extensiones
+)
 
 app = Flask(__name__)
 app.config.from_object(config["development"])
 
-# Inicializa extensiones
+
 db.init_app(app)
 mysql.init_app(app)
 login_manager_app.init_app(app)
@@ -66,4 +68,4 @@ register_socketio_events(socketio)
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Crea las tablas si no existen
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5006, debug=True)

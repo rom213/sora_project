@@ -21,7 +21,7 @@ class ModelUser:
             else:
                 return None
         except Exception as exc:
-            raise Exception(exc)
+             raise Exception(f"Error in login: {str(exc)}")
         
     @classmethod
     def register(cls, user):

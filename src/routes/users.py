@@ -23,6 +23,7 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.route("/register", methods=["GET", "POST"])
 def register():
+  try:
     if request.method == "POST":
         # Obtener los datos del formulario
         username = request.form.get("username")
@@ -41,6 +42,7 @@ def register():
             else:
                 flash("Invalid file type. Only .png, .jpg, .jpeg, .gif are allowed.")
                 return render_template("auth/register.html")
+            
 
         # Crear el objeto User
         user = User(
@@ -68,7 +70,7 @@ def register():
         except Exception as e:
             # Si ocurre un error, revertir la transacción
             db.session.rollback()
-            flash(f"Error creating user: {str(e)}", "danger")
+            flash(f"Error creating user", "danger")
             
             # Eliminar el avatar si se había subido
             if avatar_filename:
@@ -77,6 +79,12 @@ def register():
 
     # Mostrar el formulario de registro
     return render_template("auth/register.html")
+  except Exception as e:
+    db.session.rollback()
+    flash(f"Error creating user", "danger")
+    return render_template("auth/register.html") 
+    
+            
 
 
 
@@ -267,7 +275,7 @@ def reset_token(token):
 
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')  # Hash de la nueva contraseña
+        hashed_password = generate_password_hash(form.password.data) # Hash de la nueva contraseña
         user.password = hashed_password  # Establece el nuevo hash de la contraseña
         db.session.commit()
         flash("Password changed! Please login")
