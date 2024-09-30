@@ -45,10 +45,11 @@
                             </svg>
                         </div>
                 </div>
-
-                <p v-if="ps.rol==='psi'">Ps</p>
+            <div class="flex flex-col gap-[0.05rem] ml-4">
+               <div class="text-sm font-thin text-blue-800      text-start"> <p v-if="ps.rol==='psi'">Psicólogo</p></div>
                 <p v-if="ps.rol==='psi'" v-html="ps.fullname"></p>
                 <p v-if="ps.rol==='user'" v-html="ps.anonymous_user"></p>
+            </div>
 
                 <div class="bg-green-500 rounded-full w-7 h-7 flex items-center text-center justify-center pb-1 text-sm relative font-semibold right-0 -top-2 lg:top-0 lg:-right-4 "
                     v-if="ps.countMessage!=0" v-html="ps.countMessage"></div>
