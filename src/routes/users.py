@@ -6,7 +6,7 @@ from models.ModelUser import ModelUser, User
 from models.entities.User import User
 from models import db
 from forms import ResetRequestForm, ResetPasswordForm
-from extensions import mail, bcrypt
+from extensions import mail
 from flask_mail import Message
 import os
 from flask_login import current_user

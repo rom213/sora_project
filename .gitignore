@@ -5,6 +5,8 @@
 # Ignorar archivos de caché de Python
 __pycache__/
 *.py[cod]
+git rm --cached *.pyc
+git rm --cached -r __pycache__/
 *.pyc
 # Ignorar archivos de caché de Flask
 instance/
