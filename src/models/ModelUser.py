@@ -117,6 +117,8 @@ class ModelUser:
                     mesagges_tem = Message.query.filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
                     user = {}
 
+                    if conexion.user_id2 != user_id:
+                        user = User.query.filter(User.id == conexion.user_id2).first()
                     if conexion.user_id != user_id:
                         user = User.query.filter(User.id == conexion.user_id).first()
 
