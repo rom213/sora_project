@@ -1,7 +1,6 @@
 # Ignorar directorios de entorno virtual de Python
 .venv/
 .env/
-node_modules/
 
 # Ignorar archivos de caché de Python
 __pycache__/
@@ -16,5 +15,10 @@ instance/
 .history/
 
 # Ignorar archivos de caché de otros frameworks o herramientas
-.venv/
 .idea/
+node_modules/
+
+# Ignorar archivos .pyc
+*.pyc
+__pycache__/
+

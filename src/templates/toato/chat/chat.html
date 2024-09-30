@@ -2,110 +2,165 @@
     <div class="w-full bg-red-100 md:h-20 rounded-lg p-1 z-20 absolute">
         <div class="grid  gap-4">
             <div
-                class="flex cursor-pointer gap-2 items-center bg-blue-300 md:text-2xl md:min-h-12 py-2 px-1 rounded-xl px2">
-                <div v-html="psychologyMessageToaTo.letter" :class="[' w-10 h-10  md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
-                    :style="{backgroundColor:psychologyMessageToaTo.color}"></div>
-                <p v-html="psychologyMessageToaTo.fullname"></p>
+                class="flex  gap-2 items-center justify-between px-3 bg-blue-300 md:text-2xl md:min-h-12 py-2  rounded-xl px2">
+                <div class=" flex items-center px-2 gap-2">
+
+                        <div v-if="!psychologyMessageToaTo.avatar" v-html="psychologyMessageToaTo.letter"
+                        :class="['h-11 w-11 md:h-14  md:w-14 rounded-full  flex items-center justify-center ']"
+                        :style="{backgroundColor:psychologyMessageToaTo.color}"></div>
+                        <img v-if="psychologyMessageToaTo.avatar" :src="'../../../static/uploads/' + psychologyMessageToaTo.avatar" alt="" :class="['w-10 h-10  md:h-14  md:w-14 rounded-full object-cover']">
+                    
+
+                    
+                    
+
+
+                    <p v-html="psychologyMessageToaTo.fullname"></p>
+                </div>
+                <div class="cursor-pointer group h-full">
+                    <svg class="group-hover:hidden" width="62" height="51" viewBox="0 0 62 51" fill="none"
+                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <rect width="62" height="51" fill="url(#pattern0_192_2)" />
+                        <defs>
+                            <pattern id="pattern0_192_2" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                <use xlink:href="#image0_192_2" transform="matrix(0.00822581 0 0 0.01 0.0887097 0)" />
+                            </pattern>
+                            <image id="image0_192_2" width="100" height="100"
+                                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAABaUlEQVR4nO3dsY3CQBgF4W2EhAjJbdCCCyG6lJAe6ICIKoiup3dycAGgE+LMeodlPumPLHmtnQAjWXYpkiRJkqQ7SXZJTjNnd39mPS3JPq9zMAEnxi+jgGL0HyXJJsnXi+eY+o4VrntDCDIusHnvYmzdwyDXDAJjEBiDwBgExiAwiCDbJN9Opj3Ytu4hSZIkSc0lWX/Qn8R1oUsy5HMMhc4gMAaBMQiMQWAMAmOQPoKcp6cJ8/dMx+eqsUa3t73jAg/jjRXWMMgMBmm8WbcM8gSD1OJvCIxBYAwCYxAYg8AYBMYgMAaBMQiMQWAMAmMQGIPAGATGIDAGgTEIjEFgDAJjEBiDwBgExiAwBoExCIxBYAwCYxAYg8AYBMYgMAaBMQiMQWAMAmMQGIPAGATGIDAGgTFIH0EuDz6bevnHOZdYo9uXz7yrodAZBMYgMAaBMQiMQWAMApNk9eB+v6dZtd5vSZIkSSoz/QBXcZo9sjPEiQAAAABJRU5ErkJggg==" />
+                        </defs>
+                    </svg>
+                    <div class=" hidden group-hover:block bg-white h-full w-32 rounded-md text-sm p-2 relative  ">
+                        Are you sure delete
+
+                        <div @click="deleteConexion(psychologyMessageToaTo)"
+                            class="cursor-pointer hover:scale-110 transition-all w-9 h-6 border border-black rounded-sm absolute flex justify-center items-center bottom-1 right-2 hover:bg-red-300 hover:text-white">
+                            yes
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
+
     </div>
 
     <div>
-        <div  class="h-full bg-white px-2 md:px-6 pb-6 rounded-xl  w-full absolute top-0">
+        <div class="h-full bg-white px-2 md:px-6 pb-6 rounded-xl  w-full absolute top-0">
             <div id="messages" class="h-full overflow-auto scrollbar-custom relative ">
-                
+
                 <div class="md:px-7 grid grid-cols-1 gap-3 pt-20 pb-4">
-                    <div 
-                        v-for="(msg, index) in psychologyMessageToaTo.messages" 
-                        :key="index" 
-                        :class="[
+                    <div v-for="(msg, index) in psychologyMessageToaTo.messages" :key="index" :class="[
                             'flex gap-2 md:gap-4 max-w-[700px]',
                             {{current_user.id}} === msg.user_id ? 'justify-self-end' : 'justify-self-start'
-                        ]"
-                    >
-                        <div v-if="!({{current_user.id}} === msg.user_id)" class="rounded-full h-12 w-12 flex-shrink-0  flex items-center justify-center"
-                        :style="{backgroundColor:psychologyMessageToaTo.color}"
-                        >
-                            <div class="md:text-2xl font-bold text-white" v-html="msg.letters"></div>
+                        ]">
+                        <div v-if="!({{current_user.id}} === msg.user_id)"
+                            class="rounded-full h-12 w-12 flex-shrink-0  flex items-center justify-center"
+                            :style="{backgroundColor:psychologyMessageToaTo.color}">
+                            <div v-if="!msg.avatar" class="md:text-3xl font-bold text-white" v-html="msg.letters"></div>
+                            <img v-if="msg.avatar" :src="'../../../static/uploads/' + msg.avatar" alt="avatar"
+                                class="w-full h-full object-cover rounded-full">
                         </div>
                         <div>
-                            
+
                         </div>
-                        <div class="px-4 bg-[#CEE8FF] rounded-lg flex items-center relative max-w-[200px] lg:max-w-[500px]">
-                            <p v-html="msg.message" class="md:text-3xl text-lg break-words overflow-hidden whitespace-normal"></p>
+                        <div
+                            class="group transition-all px-4 bg-[#cde3f6] rounded-lg flex items-center relative max-w-[200px] md:max-w-[500px]">
+                            <div v-if="!({{current_user.id}} !== msg.user_id)"
+                                class="opacity-0 absolute group-hover:opacity-100 top-2 rounded-md cursor-pointer bg-white">
+                                <svg @click="toogleModalEditMessage(msg, msg.message)"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                </svg>
+                            </div>
+                            <p v-html="msg.message"
+                                class="md:text-3xl text-lg break-words overflow-hidden whitespace-normal"></p>
                         </div>
-                        <div v-if="{{current_user.id}} === msg.user_id" :class="['rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center bg-[{{current_user.color}}]']"
-                        >
-                        
-                        <div class="md:text-2xl font-bold text-white"> {{ current_user.init_letters() }} </div>
+                        <div v-if="{{current_user.id}} === msg.user_id"
+                            :class="['rounded-full h-12 w-12 flex-shrink-0 flex items-center justify-center bg-[{{current_user.color}}]']">
+                            {% if current_user.avatar %}
+                            <img v-if="msg.avatar"  src="{{ url_for('static', filename='uploads/' + current_user.avatar) }}" alt="avatar"
+                            class="w-full h-full object-cover rounded-full">
+                            {% else %}
+                            <div class="md:text-3xl font-bold text-white">{{current_user.init_letters()}}</div>
+
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                
-                
-               
-        
-        
+
+
+
+
+
                 <form action="" @submit.prevent="sendMessage(psychologyMessageToaTo)"
-                :class="['flex flex-col sticky bottom-0  bg-[#E9E9E9] items-center md:gap-6 md:pl-6 md:pr-6 rounded-md',{'top-full':psychologyMessageToaTo.messages.length<7}]">
-            
-                <div v-if="modalEmojis" class="grid grid-cols-8 md:grid-cols-12 gap-4 md:gap-12 overflow-auto h-44 pt-3">
-                    <span v-for="(emoji, index) in emojis" :key="index" @click="adEmoji(emoji)"
-                        class=" md:text-4xl cursor-pointer hover:scale-110 transition-all" v-html="emoji"></span>
-                </div>
-    
-    
-    
-                <div class="flex items-center w-full md:gap-5">
-                    <div>
-                        <svg v-if="!modalEmojis" @click="toogleEmojis" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect width="60" height="60" fill="url(#pattern0_32_4)" />
-                            <defs>
-                                <pattern id="pattern0_32_4" patternContentUnits="objectBoundingBox" width="1" height="1">
-                                    <use xlink:href="#image0_32_4" transform="scale(0.01)" />
-                                </pattern>
-                                <image id="image0_32_4" width="100" height="100"
-                                    xlink:href="data:image/png;base64,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" />
-                            </defs>
-                        </svg>
-    
-                        <svg @click="toogleEmojis" v-if="modalEmojis" width="86" height="72" viewBox="0 0 86 72" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect width="86" height="72" fill="url(#pattern0_66_2)" />
-                            <defs>
-                                <pattern id="pattern0_66_2" patternContentUnits="objectBoundingBox" width="1" height="1">
-                                    <use xlink:href="#image0_66_2" transform="matrix(0.00837209 0 0 0.01 0.0813953 0)" />
-                                </pattern>
-                                <image id="image0_66_2" width="100" height="100"
-                                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACKElEQVR4nO3cTW4TQRBA4QISDsJPBIiLgESAJbALeMOVg/gRRHCJzEMjTQsLcOKx47gq/b6l5YVLT90zmrYmQpIkSZIkSZIkSZIkXTvgAHgAHAG3oijgNvBomuUgKgLeAT/44yvwKooBXgPflub4DryNgjEG/jV+togigMUFc7yJCsatCTj7zxClorA6RnNWYhuerheXSR2Fy2M0DyM74P4ag6SNwvoxRveiyJb1qWIU5sU4LbFljYDnwHmlKMyLMc72LCoBTmZG+bjH3/q+ym+98VHoJUaFKPQWI3MUeo2RMQq9x8gUBWPkiYIx8kTBGHmiYIw8UTBGnigYI08UjJEnCsbIEwVj5ImCMfJEwRipDoyGmd/d+4FYDyul7weFBaMMxsgTZTBGniiDMfJEGYyxQ8y7tTVIshiNqyRRjMYoiWI0RkkUozHKFjEWPjpJgg0eFGb4i9GNxBZPbY2SKEZjlCtylecZuH3lidEYZUO7POnDlZInRmOUNV3nGTiulDwxGqOssM9/h+BKyROjMUqiGE33UTLFiN6jZIzRbZTMMbqLUiFGN1GAlx28fOY4KgDuTO9XLBNjwyhfxlkju+ntnWWXPvO2rxJvlHtaNcYGUR5HdsBd4FeVbWqL7evnOGtUAHxYMcR5hRh/RVm1Uk6ikinK8kr5DLyIYoDj6QK+vDJqxWiAQ+DJ9OrY/HckF985Hk2zHK76niRJkiRJkiRJkiRJip35Dagkt/setTYhAAAAAElFTkSuQmCC" />
-                            </defs>
-                        </svg>
-    
+                    :class="['flex flex-col sticky bottom-0  bg-[#E9E9E9] items-center md:gap-6 md:pl-6 md:pr-6 rounded-md',{'top-full':psychologyMessageToaTo.messages.length<7}]">
+
+                    <div v-if="modalEmojis"
+                        class="grid grid-cols-8 md:grid-cols-12 gap-4 md:gap-12 overflow-auto h-44 pt-3">
+                        <span v-for="(emoji, index) in emojis" :key="index" @click="adEmoji(emoji)"
+                            class=" md:text-4xl cursor-pointer hover:scale-110 transition-all" v-html="emoji"></span>
                     </div>
-                    <input class=" h-12 w-full pl-3 text-xl outline-none rounded-lg" type="text" v-model="message"
-                        placeholder="Messages">
-    
-    
-                    <button>
-                        <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect width="60" height="60" fill="url(#pattern0_32_6)" />
-                            <defs>
-                                <pattern id="pattern0_32_6" patternContentUnits="objectBoundingBox" width="1" height="1">
-                                    <use xlink:href="#image0_32_6" transform="scale(0.01)" />
-                                </pattern>
-                                <image id="image0_32_6" width="100" height="100"
-                                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEL0lEQVR4nO2cyWsUQRSHP/UUMB49CP4R5h/IH2DHaAwBDaIgiHpwOakEd0/G5SAouIAH8WK8eNRcXPDggnpQQVBRcJfgFsUtLQ0VGGPGebP01Kuq94N3SnVXVb6ZeT3f9AxYLBaLxWKxWCwWiyXGzAAyYJnvhaSeBcAR4AWQAwt9LyjFzAW2AveACQeiqNfumWJpQzqAFcAl4GcFhMo62o6FpJ5u4AzwoQqEyuryvdhU+kIuqAe+F51KX8iFtcP3BlLpC7mgfgHzfW8mlb6QC+qK7w2l0hdyYa3xvblU+kIuqHFgtu+NptAXcmGN+N5wKn0hF5apkjb1BUmZKgHmuWv++yX9k4tL2FvAZcHYYySajjb0hefAaTdP5qDUOiY5VdJdcl94D1wANjgIkzXonin/OzYZVbKg5L7wHbgK7AF6p4CYrBOpq5K5Jb9fKM55BzgE9FeBUFmPU1QlHR76gqTWpaZKuj31BWmdS0GVaOgLmaB6gHexqhJtfSET1JBg3vMEFK19IRPWqGD+YlwwfeGj0r6QCaoP+BKyKukKpC9kwhoWrEndXSUh9oWsomH/7+/BqJLQ+0I/sLfGmCBUSQx9YS1wHRioMU6tKompLxwEPgmBq1Mlfe4pWQaEYjM3gf1unqzk6nPPvGLuw4Lx6zWqkk7gdkB9IatShdJ44ua/GLoqaQWUdvSFrErtq3gf8RRYGoMqaQRKZV9Y5AFE75RH+TfXzKNRJfVCeQOs9gAiA1YBD6es50CMqiQEKLvdVVTlOi7UcXzxkvZVoEpmoSRaofQCZ6cxBY+AJbGrEm1QBoG708z7uYF5g1ElWqFsA8ammW/CXWHVC1a9KtEKpce9n/ldZa5zDZxTrSrRDmV5jZeW4gprcQPnVadKQoCy2R1f7dzFTRIrGzhvdHeVlA2lBzheQ/UXfWN7g6BHYryrpCwoA8A1wfnONNGPVKsSTVA2Ai8F57nXhKIJQpVogHLIObFax481aY+DUSW+oPQLv4cxeeWzpQkYwamSdkMZAp7VccypJmBIVUlUX8CpF8pEHWNvCO4aiVaVaPvk8a37UbBmYASvSrRA+QFsahJGNKpEA5SjLYARlSrxCeVyi2BEp0p8QHkhuLktaVXS7quvXS2CEbUqCfHzlKHYVUloUEYF8xTjkk1nG6EkpUpCgDKcmirRDuVWiqpEK5TBlFWJRignU1cl2qA8rnGOJFSJFijrBMcno0o0QBkRHJuUKvEJpcdUiS4oQ4LxyaoSH1BGBWOTViXNZI77VQcplFdCVTLT98ZCTmeLP6M3VaIMSlcrFmShJVBMlSiDstMe2Xqg/DJVogvKlRLXY6F+KKZKFEEZT/GuEs1QzvteZGrprAHFVIkiKK/trhJdUI55XI+Ff6GYKlEE5YHvhVj+VvfFTzVZLBaLxWKxWCwWCxb4Ay+puV58aO5QAAAAAElFTkSuQmCC" />
-                            </defs>
-                        </svg>
-                    </button>
-                </div>
+
+
+
+                    <div class="flex items-center w-full md:gap-5">
+                        <div>
+                            <svg v-if="!modalEmojis" @click="toogleEmojis" width="60" height="60" viewBox="0 0 60 60"
+                                fill="none" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect width="60" height="60" fill="url(#pattern0_32_4)" />
+                                <defs>
+                                    <pattern id="pattern0_32_4" patternContentUnits="objectBoundingBox" width="1"
+                                        height="1">
+                                        <use xlink:href="#image0_32_4" transform="scale(0.01)" />
+                                    </pattern>
+                                    <image id="image0_32_4" width="100" height="100"
+                                        xlink:href="data:image/png;base64,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" />
+                                </defs>
+                            </svg>
+
+                            <svg @click="toogleEmojis" v-if="modalEmojis" width="86" height="72" viewBox="0 0 86 72"
+                                fill="none" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect width="86" height="72" fill="url(#pattern0_66_2)" />
+                                <defs>
+                                    <pattern id="pattern0_66_2" patternContentUnits="objectBoundingBox" width="1"
+                                        height="1">
+                                        <use xlink:href="#image0_66_2"
+                                            transform="matrix(0.00837209 0 0 0.01 0.0813953 0)" />
+                                    </pattern>
+                                    <image id="image0_66_2" width="100" height="100"
+                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACKElEQVR4nO3cTW4TQRBA4QISDsJPBIiLgESAJbALeMOVg/gRRHCJzEMjTQsLcOKx47gq/b6l5YVLT90zmrYmQpIkSZIkSZIkSZIkXTvgAHgAHAG3oijgNvBomuUgKgLeAT/44yvwKooBXgPflub4DryNgjEG/jV+togigMUFc7yJCsatCTj7zxClorA6RnNWYhuerheXSR2Fy2M0DyM74P4ag6SNwvoxRveiyJb1qWIU5sU4LbFljYDnwHmlKMyLMc72LCoBTmZG+bjH3/q+ym+98VHoJUaFKPQWI3MUeo2RMQq9x8gUBWPkiYIx8kTBGHmiYIw8UTBGnigYI08UjJEnCsbIEwVj5ImCMfJEwRipDoyGmd/d+4FYDyul7weFBaMMxsgTZTBGniiDMfJEGYyxQ8y7tTVIshiNqyRRjMYoiWI0RkkUozHKFjEWPjpJgg0eFGb4i9GNxBZPbY2SKEZjlCtylecZuH3lidEYZUO7POnDlZInRmOUNV3nGTiulDwxGqOssM9/h+BKyROjMUqiGE33UTLFiN6jZIzRbZTMMbqLUiFGN1GAlx28fOY4KgDuTO9XLBNjwyhfxlkju+ntnWWXPvO2rxJvlHtaNcYGUR5HdsBd4FeVbWqL7evnOGtUAHxYMcR5hRh/RVm1Uk6ikinK8kr5DLyIYoDj6QK+vDJqxWiAQ+DJ9OrY/HckF985Hk2zHK76niRJkiRJkiRJkiRJip35Dagkt/setTYhAAAAAElFTkSuQmCC" />
+                                </defs>
+                            </svg>
+
+                        </div>
+                        <input class=" h-12 w-full pl-3 text-xl outline-none rounded-lg" type="text" v-model="message"
+                            placeholder="Messages">
+
+
+                        <button>
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect width="60" height="60" fill="url(#pattern0_32_6)" />
+                                <defs>
+                                    <pattern id="pattern0_32_6" patternContentUnits="objectBoundingBox" width="1"
+                                        height="1">
+                                        <use xlink:href="#image0_32_6" transform="scale(0.01)" />
+                                    </pattern>
+                                    <image id="image0_32_6" width="100" height="100"
+                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEL0lEQVR4nO2cyWsUQRSHP/UUMB49CP4R5h/IH2DHaAwBDaIgiHpwOakEd0/G5SAouIAH8WK8eNRcXPDggnpQQVBRcJfgFsUtLQ0VGGPGebP01Kuq94N3SnVXVb6ZeT3f9AxYLBaLxWKxWCwWiyXGzAAyYJnvhaSeBcAR4AWQAwt9LyjFzAW2AveACQeiqNfumWJpQzqAFcAl4GcFhMo62o6FpJ5u4AzwoQqEyuryvdhU+kIuqAe+F51KX8iFtcP3BlLpC7mgfgHzfW8mlb6QC+qK7w2l0hdyYa3xvblU+kIuqHFgtu+NptAXcmGN+N5wKn0hF5apkjb1BUmZKgHmuWv++yX9k4tL2FvAZcHYYySajjb0hefAaTdP5qDUOiY5VdJdcl94D1wANjgIkzXonin/OzYZVbKg5L7wHbgK7AF6p4CYrBOpq5K5Jb9fKM55BzgE9FeBUFmPU1QlHR76gqTWpaZKuj31BWmdS0GVaOgLmaB6gHexqhJtfSET1JBg3vMEFK19IRPWqGD+YlwwfeGj0r6QCaoP+BKyKukKpC9kwhoWrEndXSUh9oWsomH/7+/BqJLQ+0I/sLfGmCBUSQx9YS1wHRioMU6tKompLxwEPgmBq1Mlfe4pWQaEYjM3gf1unqzk6nPPvGLuw4Lx6zWqkk7gdkB9IatShdJ44ua/GLoqaQWUdvSFrErtq3gf8RRYGoMqaQRKZV9Y5AFE75RH+TfXzKNRJfVCeQOs9gAiA1YBD6es50CMqiQEKLvdVVTlOi7UcXzxkvZVoEpmoSRaofQCZ6cxBY+AJbGrEm1QBoG708z7uYF5g1ElWqFsA8ammW/CXWHVC1a9KtEKpce9n/ldZa5zDZxTrSrRDmV5jZeW4gprcQPnVadKQoCy2R1f7dzFTRIrGzhvdHeVlA2lBzheQ/UXfWN7g6BHYryrpCwoA8A1wfnONNGPVKsSTVA2Ai8F57nXhKIJQpVogHLIObFax481aY+DUSW+oPQLv4cxeeWzpQkYwamSdkMZAp7VccypJmBIVUlUX8CpF8pEHWNvCO4aiVaVaPvk8a37UbBmYASvSrRA+QFsahJGNKpEA5SjLYARlSrxCeVyi2BEp0p8QHkhuLktaVXS7quvXS2CEbUqCfHzlKHYVUloUEYF8xTjkk1nG6EkpUpCgDKcmirRDuVWiqpEK5TBlFWJRignU1cl2qA8rnGOJFSJFijrBMcno0o0QBkRHJuUKvEJpcdUiS4oQ4LxyaoSH1BGBWOTViXNZI77VQcplFdCVTLT98ZCTmeLP6M3VaIMSlcrFmShJVBMlSiDstMe2Xqg/DJVogvKlRLXY6F+KKZKFEEZT/GuEs1QzvteZGrprAHFVIkiKK/trhJdUI55XI+Ff6GYKlEE5YHvhVj+VvfFTzVZLBaLxWKxWCwWCxb4Ay+puV58aO5QAAAAAElFTkSuQmCC" />
+                                </defs>
+                            </svg>
+                        </button>
+                    </div>
                 </form>
             </div>
-        
-        
-        
+
+
+
         </div>
     </div>
 

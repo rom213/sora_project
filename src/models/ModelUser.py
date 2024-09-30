@@ -13,6 +13,9 @@ class ModelUser:
     def login(cls, user):
         try:
             found_user = User.query.filter_by(username=user.username).first()
+            print(found_user.password)
+            print(user.password)
+
             if found_user and User.check_password(found_user.password, user.password):
                 return found_user
             else:
@@ -26,7 +29,11 @@ class ModelUser:
             db.session.add(user)
             db.session.commit()
         except Exception as exc:
-            raise Exception(exc)
+            raise Exception(exc)    
+    
+    
+        
+    
         
     @classmethod
     def allUsers(cls):
@@ -40,8 +47,7 @@ class ModelUser:
     @classmethod
     def allUsersByToaTo(cls, user_id):
         try:
-            conexions = Conexion.query.filter(and_(or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id),
-                    Conexion.conexion_type == 'toato')).all()
+            conexions = Conexion.query.filter(and_(and_(or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id), Conexion.conexion_type == 'toato'), Conexion.delete_at==None)).all()
             
             result = []
             for conexion in conexions:
@@ -51,6 +57,9 @@ class ModelUser:
                     if conexion.user_id2 != user_id:
                         user = User.query.filter(User.id == conexion.user_id2).first()
                     if conexion.user_id != user_id:
+                        user = User.query.filter(User.id == conexion.user_id).first()
+
+                    if conexion.user_id == user_id and conexion.user_id2==user_id:
                         user = User.query.filter(User.id == conexion.user_id).first()
                     
 
@@ -65,8 +74,7 @@ class ModelUser:
                                 'message': message.message,
                                 'user_id': message.user_id,
                                 'conexion_id': message.conexion_id,
-                                'letters': user.init_letters(),
-                                'avatar': user.get_avatar()
+                                'letters': user.init_letters()
                             })
                             if message.user_id !=user_id and message.readmessage==0:
                                 countMessage=countMessage+1
@@ -79,10 +87,13 @@ class ModelUser:
                         'lastname': user.lastname,
                         'userLoginId': user_id,
                         'rol': user.rol,
+                        'avatar':user.avatar,
                         'color': user.color,
                         'letter': user.init_letters(),
                         'messages': mesagges,
-                        'countMessage':countMessage
+                        'countMessage':countMessage,
+                        'conexion_type': conexion.conexion_type,
+                        'data':True
                     })
                 
                     # Ordenar por el último mensaje o conexión
@@ -99,20 +110,16 @@ class ModelUser:
     def allPsychologyUsers(cls, user_id, rol):
         try:
             if rol == 'psi':
-                conexions = Conexion.query.filter(and_(
-                    or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id),
-                    Conexion.conexion_type == 'psi')).all()
+                conexions = Conexion.query.filter(and_(and_(or_(Conexion.user_id == user_id, Conexion.user_id2 == user_id), Conexion.conexion_type=='psi'), Conexion.delete_at==None)).all()
                 result = []
 
                 for conexion in conexions:
                     countMessage=0
                     mesagges_tem = Message.query.filter(Message.conexion_id == conexion.id).order_by(asc(Message.id)).all()
                     user = {}
-                    if conexion.user_id2 != user_id:
-                        user = User.query.filter(User.id == conexion.user_id2).first()
+
                     if conexion.user_id != user_id:
                         user = User.query.filter(User.id == conexion.user_id).first()
-                    
 
                     mesagges = []
                     fullname = user.name + ' ' + user.lastname
@@ -131,6 +138,7 @@ class ModelUser:
                             if message.user_id !=user_id and message.readmessage==0:
                                 countMessage=countMessage+1
                     
+                    print(countMessage)
  
                     
                     result.append({
@@ -139,13 +147,16 @@ class ModelUser:
                         'conexion_id': conexion.id,
                         'fullname': fullname,
                         'name': user.name,
+                        'avatar':user.avatar,
                         'lastname': user.lastname,
                         'userLoginId': user_id,
                         'rol': user.rol,
                         'color': user.color,
                         'letter': user.init_letters(),
                         'messages': mesagges,
-                        'countMessage':countMessage
+                        'countMessage':countMessage,
+                        'anonymous_user':user.anonymous_user,
+                        'conexion_type': conexion.conexion_type
                     })
                 
                 # Ordenar por el último mensaje o conexión
@@ -163,7 +174,8 @@ class ModelUser:
                     letters = user.first_letter() + user.first_letter_of_lastname()
                     fullname = user.name + ' ' + user.lastname
 
-                    conexion = db.session.query(Conexion).filter(and_(or_(Conexion.user_id2 == user.id, Conexion.user_id == user_id), Conexion.conexion_type == 'psi')).first()
+                    conexion = db.session.query(Conexion).filter(and_(and_(Conexion.user_id2 == user.id, Conexion.user_id == user_id),
+                    Conexion.delete_at==None)).first()
 
                     mesagges_tem = []
                     mesagges = []
@@ -185,13 +197,12 @@ class ModelUser:
                                 countMessage=countMessage+1
                         
                     conexion_id = conexion.id if conexion else None
-
-                    
                     result.append({
                         'id': user.id,
                         'username': user.username,
                         'conexion_id': conexion_id,
                         'fullname': fullname,
+                        'avatar':user.avatar,
                         'name': user.name,
                         'lastname': user.lastname,
                         'userLoginId': user_id,
@@ -199,7 +210,8 @@ class ModelUser:
                         'color': user.color,
                         'letter': letters,
                         'messages': mesagges,
-                        'countMessage':countMessage
+                        'countMessage':countMessage,
+                        'conexion_type': conexion.conexion_type if conexion else None
                     })
                 
                 result.sort(
@@ -208,9 +220,11 @@ class ModelUser:
                 )                
             
                 return result
+
+
         except Exception as exc:
             raise Exception(exc) 
-
+   
 
         
 
