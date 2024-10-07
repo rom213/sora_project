@@ -126,10 +126,11 @@ def update():
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
 
-        user = User(username=username, password=password)
+        user = User(email=email, password=password)
+        print(user)
         logged_user = ModelUser.login(user)
 
         if logged_user and logged_user.password:
@@ -228,18 +229,20 @@ def delete_avatar(filename):
 
 def send_email(user):
     token = user.get_token()
-    reset_url = url_for("users.reset_token", token=token, _external=True)
+    reset_url = f'https://www.psicol.site/users/reset_password/{token}'
+
     msg = Message(
-        "Password Reset Request", recipients=[user.email], sender="MAIL_USERNAME"
+        "Password Reset Request", 
+        recipients=[user.email], 
+        sender="your-email@example.com"  # Aquí debes colocar tu correo o variable de entorno
     )
     
-    msg.body = f"""To reset your password, please follow the link below:{reset_url}
+    msg.body = f"""To reset your password, please follow the link below: {reset_url}
 
-            If you didn't request a password reset, please ignore this email."""
-
+If you didn't request a password reset, please ignore this email."""
+    
     # Enviar el correo
     mail.send(msg)
-
 
 @users_bp.route("/reset_password", methods=["GET", "POST"])
 def reset_request():
@@ -291,7 +294,7 @@ def reset_token(token):
 
 def send_verification_email(user):
     token = user.get_token()  
-    verification_url = url_for('users.verify_email', token=token, _external=True)
+    verification_url = f'https://www.psicol.site/users/verify_email/{token}'
 
     msg = Message("Verify your account", recipients=[user.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
     msg.body = f'''Welcome to our platform,

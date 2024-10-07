@@ -1,4 +1,4 @@
-<div class="w-full h-20 bg-[#536493] fixed z-10 flex justify-between items-center pr-6 px-2 lg:px-12  pb-3">
+<div class="w-full h-20 bg-[#007D78] fixed z-10 flex justify-between items-center pr-6 px-2 lg:px-12  pb-3">
 
   <audio class="opacity-0 absolute" id="miAudio" autoplay>
     <source src="{{ url_for('static', filename='sound/livechat-129007.mp3') }}" type="audio/mpeg">
@@ -38,7 +38,7 @@
         global chat
       </div>
 
-      <div v-if="countMessages.group!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+      <div v-if="countMessages.group!==0" class="bg-[#FF6719] rounded-full w-9 absolute top-0 right-0 pb-1"
         v-html="countMessages.group"></div>
     </button>
     <!--     <button
@@ -65,7 +65,7 @@
         psychology
       </div>
 
-      <div v-if="countMessages.psi!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+      <div v-if="countMessages.psi!==0" class="bg-[#FF6719] rounded-full w-9 absolute top-0 right-0 pb-1"
         v-html="countMessages.psi"></div>
     </button>
 
@@ -89,7 +89,7 @@
       </div>
       
 
-      <div v-if="countMessages.toato!==0" class="bg-red-400 rounded-full w-9 absolute top-0 right-0 pb-1"
+      <div v-if="countMessages.toato!==0" class="bg-[#FF6719] rounded-full w-9 absolute top-0 right-0 pb-1"
         v-html="countMessages.toato"></div>
     </button>
 
