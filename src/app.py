@@ -95,4 +95,4 @@ init_app(app, socketio)
 register_socketio_events(socketio)
 
 if __name__ == "__main__":
-    pass
+    pass;

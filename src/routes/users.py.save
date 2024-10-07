@@ -228,7 +228,7 @@ def delete_avatar(filename):
 
 def send_email(user):
     token = user.get_token()
-    reset_url = f'https://www.psicol.site/users/reset_password/{token}'
+    reset_url = url_for("users.reset_token", token=token, _external=True)
     msg = Message(
         "Password Reset Request", recipients=[user.email], sender="MAIL_USERNAME"
     )

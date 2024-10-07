@@ -3,7 +3,7 @@ module.exports = {
   apps: [
     {
       name: "flask-app",
-      script: "gunicorn",
+      script: '/home/bitnami/.local/bin/gunicorn',
       args: "--worker-class eventlet -w 1 -b 0.0.0.0:3000 app:app",
       interpreter: "none",
       env: {
