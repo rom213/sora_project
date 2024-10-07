@@ -29,12 +29,12 @@ class User(UserMixin, db.Model):
 
     def __init__(
         self,
-        username,
+        email,
         password,
-        email="",
         name="",
         lastname="",
         avatar="",
+        username="",
         anonymous_user="",
         is_verified= False
 
