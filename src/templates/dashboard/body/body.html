@@ -1,0 +1,35 @@
+{% extends 'dashboard/dashboard.html' %}
+
+<script>
+    import Controls from './controls/controls.vue';
+    export default{
+        components:{
+            Controls
+        }
+    }
+</script>
+
+{% block title %}
+dashboard
+{% endblock %}
+
+
+{% block sidebar %}
+{% include 'dashboard/sidebar/sidebar.html' %}
+{% endblock %}
+
+{% block header %}
+{% include 'dashboard/header/header.html' %}
+{% endblock %}
+
+{% block body %}
+<div>
+    <div v-if="navigate==='dashboard'">{% include 'dashboard/body/controls/controls.html' %}</div>
+    <div v-if="navigate==='users'">
+        {% include 'dashboard/body/users/users.html' %}
+    </div>
+</div>
+
+{% endblock %}
+
+

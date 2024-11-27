@@ -1,187 +1,114 @@
 from flask import Blueprint, request, jsonify
 from flask_socketio import SocketIO, emit
-from models.entities.Group_message import Group_message
-from models.ModelMessageGroup import ModelMessageGroup
-from models.ModelMessage import ModelMessage
-from models.ModelConexion import ModelConexion
-from models.ModelUser import ModelUser
-
-from flask_login import current_user
+import requests
+from websocket import create_connection, WebSocket
+import threading
+import json
+import logging
 
 sokets_bp = Blueprint('sokets', __name__)
 
+buttons_state = {
+    'security': False,
+    'opendoor': False,
+    'offlights': False,
+    'alarm': False,
+    'room': False,
+    'dinning': False,
+    'bathroom': False,
+    'yarn': False,
+    'closeDoor':True
+}
+
+NODE_SERVER_URL = "http://192.168.1.108:5000/update_buttons"
+NODE_SERVER_WS_URL = "ws://192.168.1.108:5000"
+
 # Definir socketio globalmente
 socketio = None
+ws = None
+
+@sokets_bp.route('/update_buttons', methods=['POST'])
+def update_buttons():
+    global buttons_state
+    buttons_state = request.json
+    print("romario")
+
+    emit_status_update()
+    return jsonify(buttons_state), 200
+
+def emit_status_update():
+    global socketio
+    if socketio:
+        socketio.emit('status_update', buttons_state, namespace='/')
 
 def register_socketio_events(socketio_instance):
     global socketio
     socketio = socketio_instance
 
+    @socketio.on('connect')
+    def handle_connect():
+        emit('status_update', buttons_state)
+
+    @socketio.on('toggle_button')
+    def handle_toggle_button(data):
+        button = data['button']
+        buttons_state[button] = not buttons_state[button]
+        emit('status_update', buttons_state, broadcast=True)
+        # Notify the Node.js server about the button state change
+        requests.post(NODE_SERVER_URL, json=buttons_state)
+        # Also send update via WebSocket
+        if ws:
+            ws.send(json.dumps(buttons_state))
+
     @socketio.on('message')
     def handle_message(message):
-        if current_user.is_authenticated:
-            user_id = current_user.id
-            group_messages = Group_message(message=message, user_id=user_id)
-            messages=ModelMessageGroup.create(group_message=group_messages)
-            if message != "User connected!":
-                emit('message', messages, broadcast=True)
-        else:
-            print("Anonymous user sent a message")
+        print("received message= " + message)
+        if message != "User connected!":
+            emit('message', message, broadcast=True)
 
-    @socketio.on('message_psi')
-    def handle_message_psi(data):
-        if current_user.is_authenticated:
-            conexion_id = data.get('conexion_id')
-            conexion_type=data.get('conexion_type')
             
-            if not conexion_id:
-                conexion = ModelConexion.create(user_id2=data.get('user_id'), conexion_type=conexion_type)
-                if conexion:
-                    conexion_id = conexion.id
-
-            group_messages = ModelMessage.create(message=data.get('message'), conexion_id=conexion_id)
-
-            if group_messages:
-                first_user = group_messages[0]
-                if current_user.id == first_user.get('userLoginId'):
-                    allPsychology = ModelUser.allPsychologyUsers(user_id=current_user.id, rol=current_user.rol)
-
-                    emit('message_psi', allPsychology, broadcast=True)
-                    
-                
-                allPsychology=ModelUser.allPsychologyUsers(user_id=data.get('user_id'), rol=data.get('rol'))
-                emit('message_psi', allPsychology, broadcast=True)
+def send_ws_update():
+    global ws
+    try:
+        if ws and ws.connected:
+            logging.debug("Sending data through WebSocket")
+            ws.send(json.dumps(buttons_state))
         else:
-            print("Anonymous user sent a message")
+            logging.warning("WebSocket is closed. Reconnecting...")
+            connect_ws()
+            ws.send(json.dumps(buttons_state))
+    except WebSocket.ConnectionClosedException as e:
+        logging.error(f"Failed to send data: {e}")
+        connect_ws()
 
-    @socketio.on('message_toato')
-    def handle_message_toato(data):
-        if current_user.is_authenticated:
-            conexion_type=data.get('conexion_type')
-            conexion_id = data.get('conexion_id')
-            
-            messages = new_func_message(data, conexion_type, conexion_id)
+def connect_ws():
+    global ws
+    try:
+        ws = create_connection(NODE_SERVER_WS_URL)
+        logging.info("WebSocket connection established")
+    except Exception as e:
+        logging.error(f"Failed to connect WebSocket: {e}")
 
-            if messages:
-                first_user = messages[0]
-                if current_user.id == first_user.get('userLoginId'):
-                    emit('message_toato', messages, broadcast=True)
-                    
-                
-                messages=ModelUser.allUsersByToaTo(user_id=data.get('user_id'))
-                emit('message_toato', messages, broadcast=True)
-        else:
-            print("Anonymous user sent a message")
-    
+def start_ws_client():
+    global ws
+    while True:
+        try:
+            connect_ws()
+            while ws.connected:
+                result = ws.recv()
+                if result:
+                    data = json.loads(result)
+                    logging.debug(f"Received data from WebSocket: {data}")
+                    global buttons_state
+                    buttons_state = data
+                    emit_status_update()
+        except WebSocket.ConnectionClosed:
+            logging.warning("WebSocket connection closed, reconnecting...")
+            continue
+        except Exception as e:
+            logging.error(f"WebSocket error: {e}")
+            continue
 
-
-    @socketio.on('conexion_delete')
-    def handle_delete_conexion(data):
-        if current_user.is_authenticated:
-            conexion_type=data.get('conexion_type')
-            conexion_id = data.get('conexion_id')
-            
-            if conexion_id:
-                ModelConexion.delete(id_conexion=conexion_id);
-                if conexion_type=='toato':
-                    messages=ModelUser.allUsersByToaTo(user_id=data.get('user_id'))
-                    if not messages:
-                        messages=[{
-                            'userLoginId': data.get('user_id'),
-                            'data':False
-                        }]
-                        
-                    emit('message_toato', messages, broadcast=True)
-
-                if conexion_type=='psi':
-                    messages=ModelUser.allPsychologyUsers(user_id=data.get('user_id'), rol=data.get('rol'))
-                    emit('message_psi', messages, broadcast=True)
-
-                
-        else:
-            print("Anonymous user sent a message")
-
-
-    @socketio.on('message_update')
-    def message_update(data):
-        if current_user.is_authenticated:
-            action_type=data.get('action_type')
-            message_id = data.get('message_id')
-            user_id=data.get('user_id')
-            messages_type=data.get('messages_type')
-            message=data.get('message')
-
-            if message_id:
-                if messages_type=='group':
-                    if action_type=='delete':
-                       ModelMessageGroup.delete(message_id=message_id);
-                    if action_type=='update':
-                       ModelMessageGroup.update(message_id=message_id, new_message=message)
-                    emit('message', ModelMessageGroup.all(), broadcast=True)
-
-                if messages_type=='toato':
-                    if action_type=='delete':
-                        ModelMessage.delete(message_id=message_id);
-                    if action_type=='update':
-                        ModelMessage.update(message_id=message_id,new_message=message)
-
-
-                    messages = ModelUser.allUsersByToaTo(user_id=current_user.id)
-                    emit('message_toato', messages, broadcast=True)
-                            
-                        
-                    messages=ModelUser.allUsersByToaTo(user_id=data.get('user_id'))
-                    emit('message_toato', messages, broadcast=True)
-
-
-                if messages_type=='psi':
-                        if action_type=='delete':
-                            ModelMessage.delete(message_id=message_id);
-                        
-                        if action_type=='update':
-                            ModelMessage.update(message_id=message_id,new_message=message)
-
-
-
-                        allPsychology = ModelUser.allPsychologyUsers(user_id=current_user.id, rol=current_user.rol)
-                        emit('message_psi', allPsychology, broadcast=True)
-                        
-                        allPsychology=ModelUser.allPsychologyUsers(user_id=data.get('user_id'), rol=data.get('rol'))
-                        emit('message_psi', allPsychology, broadcast=True)
-
-        else:
-            print("Anonymous user sent a message")
-
-
-
-
-    def new_func_message(data, conexion_type, conexion_id):
-        if not conexion_id: 
-            conexion=ModelConexion.findConexion(user_id=data.get('user_id'), type_conexion=conexion_type);
-            if conexion:
-                conexion_id=conexion.id
-            if not conexion:
-                conexion = ModelConexion.create(user_id2=data.get('user_id'), conexion_type=conexion_type)
-                if conexion:
-                    conexion_id = conexion.id
-        messages=ModelMessage.createToato(message=data.get('message'), conexion_id=conexion_id)
-        return messages
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    @socketio.on('read_message')
-    def read_message(data):
-        if current_user.is_authenticated:
-            ModelMessage.readMessage(conexion_id=data.get('conexion_id'),user_id=data.get('user_id'))
-        else:
-            print("Anonymous user sent a message")
-
-
-    
+# Run WebSocket client in a separate thread
+ws_thread = threading.Thread(target=start_ws_client)
+ws_thread.start()
