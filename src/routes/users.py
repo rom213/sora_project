@@ -123,13 +123,15 @@ def update():
 
     return render_template('auth/register.html')
 
+
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
 
-        user = User(username=username, password=password)
+        user = User(email=email, password=password)
+        print(user)
         logged_user = ModelUser.login(user)
 
         if logged_user and logged_user.password:

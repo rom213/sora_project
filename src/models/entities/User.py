@@ -23,14 +23,13 @@ class User(UserMixin, db.Model):
     iuud = db.Column(db.String(16), nullable=False, default="0000000000000000")
     anonymous_user = db.Column(db.String(20), nullable=False)
     avatar = db.Column(db.String(100), nullable=True)
-    group_messages = db.relationship("Group_message", backref="user", lazy=True)
     email = db.Column(db.String(120), unique=True, nullable=True)
     is_verified = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(
         self,
-        username,
-        password,
+        username="",
+        password="",
         email="",
         name="",
         lastname="",

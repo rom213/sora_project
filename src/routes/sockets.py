@@ -20,8 +20,8 @@ buttons_state = {
     'closeDoor':True
 }
 
-NODE_SERVER_URL = "http://192.168.1.108:5000/update_buttons"
-NODE_SERVER_WS_URL = "ws://192.168.1.108:5000"
+NODE_SERVER_URL = "http://localhost:5000/update_buttons"
+NODE_SERVER_WS_URL = "ws://localhost:5000"
 
 # Definir socketio globalmente
 socketio = None

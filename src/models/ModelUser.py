@@ -1,6 +1,4 @@
 from .entities.User import User
-from .entities.Conexion import Conexion
-from .entities.Message import Message
 from sqlalchemy import asc, desc
 from . import db
 from flask_login import current_user
@@ -11,15 +9,15 @@ from sqlalchemy import or_, and_
 class ModelUser:
     @classmethod
     def login(cls, user):
-        try:
-            found_user = User.query.filter_by(username=user.username).first()
-            
-            if found_user and User.check_password(found_user.password, user.password):
-                return found_user
-            else:
-                return None
-        except Exception as exc:
-             raise Exception(f"Error in login: {str(exc)}")
+            try:
+                found_user = User.query.filter_by(email=user.email).first()
+                
+                if found_user and User.check_password(found_user.password, user.password):
+                    return found_user
+                else:
+                    return None
+            except Exception as exc:
+                raise Exception(f"Error in login: {str(exc)}")
         
     @classmethod
     def register(cls, user):

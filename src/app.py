@@ -34,7 +34,7 @@ def load_user(id):
 @app.route("/index")
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template('dashboard/body/body.html')
 
 
 
