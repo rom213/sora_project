@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+        <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://unpkg.com/vue@3.2.26/dist/vue.global.js"></script>
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         .parking-slot {
             border: 1px solid #ccc;
@@ -38,9 +40,35 @@
 
         </button>
 
+
+
+
+        <div v-if="showReg!==null" v-on:click="hidenRegister()" class="absolute h-screen w-screen right-0 top-0 z-50 flex justify-center items-center">
+                <div v-on:click.stop class="bg-white  rounded-lg flex flex-col justify-center p-2 shadow-md">
+                    <div class="flex justify-center">
+                        <img class="rounded-sm w-[700px]" :src="`../../static/uploads/${showReg.image_path}`" alt="">
+                    </div>
+                    <div class="grid grid-cols-3 text-xl">
+                        <div>
+                            <div>RFID CODE</div>
+                            <div v-html="showReg.rfid"></div>
+                        </div>
+                        <div>
+                            <div>REGISTRO</div>
+                            <div v-html="showReg.created_at"></div>
+                        </div>
+                        <div>
+                            <div>Acceso</div>
+                            <div class="text-green-400" v-if="showReg.is_success">Autorizado</div>
+                            <div class="text-red-600" v-if="!showReg.is_success">Inautorizado</div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
         <div class="flex flex-grow">
             <div
-                :class="{'h-full w-60 bg-red-500 text-white flex justify-center rounded-l-2xl': true, 'w-16 overflow-hidden pr-2': !showSidebar}">
+                :class="{'h-full  bg-[#C56060] text-white flex justify-center rounded-l-2xl': true, 'w-16 overflow-hidden pr-2': !showSidebar, 'w-60':showSidebar}">
                 {% block sidebar %}
                 {% endblock %}
             </div>
@@ -55,17 +83,18 @@
     </div>
 
     <script>
-        const { ref } = Vue;
+        const { ref, onMounted } = Vue;
         const socket = io();
-
+        
         const app = {
             setup() {
-                const showSidebar = ref(true);
-                const navigate = ref("dashboard");
+                const showSidebar = ref(false);
+                const navigate = ref("users");
+                const register_date = ref([]);
+                const showReg=ref(null)
 
-
-                const toogleNavigation=(value)=>{
-                    navigate.value=value;
+                const toogleNavigation = (value) => {
+                    navigate.value = value;
                 }
 
                 const buttons = ref({
@@ -77,13 +106,18 @@
                     dinning: false,
                     bathroom: false,
                     yarn: false,
-                    closeDoor:false
+                    closeDoor: false,
+                    ethernet: false,
+                    ethernet_state:false
                 })
 
+                onMounted(() => {
+                    getRegisterData()
+                })
 
-                
                 socket.on('status_update', (data) => {
                     buttons.value = data;
+                    console.log(data);
                 });
 
                 const tooglebooton = (button) => {
@@ -95,10 +129,22 @@
                 const toggleSidebar = () => {
                     showSidebar.value = !showSidebar.value;
                 };
-                
-                
-                const strokSecurityColor=()=>{
+
+
+                const strokSecurityColor = () => {
                     return this.buttons.security ? 'red' : 'green';
+                }
+
+                const getRegisterData = async () => {
+                    const response = await axios.get('/all_register')
+                    register_date.value = response.data
+                }
+
+                const showRegister=(data)=>{
+                    showReg.value=data
+                }
+                const hidenRegister=()=>{
+                    showReg.value=null
                 }
 
 
@@ -111,7 +157,11 @@
                     buttons,
                     toogleNavigation,
                     navigate,
-                    strokSecurityColor
+                    register_date,
+                    strokSecurityColor,
+                    hidenRegister,
+                    showRegister,
+                    showReg
                 };
             }
         };

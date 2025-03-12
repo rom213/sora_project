@@ -2,6 +2,8 @@
 from flask import Flask, render_template, redirect, url_for, jsonify
 
 
+
+
 from config import config
 from models import db  # Importa db desde models/__init__.py
 from models.ModelUser import ModelUser
@@ -25,6 +27,8 @@ login_manager_app.init_app(app)
 mail.init_app(app)
 bcrypt.init_app(app)
 login_manager_app.login_view = "users.login"
+
+
 
 
 @login_manager_app.user_loader

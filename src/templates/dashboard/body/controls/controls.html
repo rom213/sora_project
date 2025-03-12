@@ -1,7 +1,7 @@
-<div class="bg-blue-50 w-full h-full absolute -left-3 rounded-2xl pt-16 overflow-x-auto p-10">
-    <div class="grid sm:grid-cols-2 lg:grid-cols-7 gap-3">
+<div class="bg-blue-50 w-full absolute -left-3 rounded-2xl h-full pt-32 overflow-auto">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-7 gap-3 overflow-auto">
         <div class="grid h-72  lg:col-span-2 p-2">
-            <div class="bg-gray-200 rounded-3xl flex flex-col pt-0">
+            <div class="bg-gray-200 rounded-3xl flex flex-col">
                 <div class="flex justify-center">
                     <svg width="159" height="164" viewBox="0 0 159 164" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -116,9 +116,9 @@
         </div>
     </div>
 
-    <div class="w-full p-4 grid md:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-5">
+    <div class="w-full p-4 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         <div :class="{
-            'w-full h-full p-4 bg-gray-200 rounded-xl flex justify-center flex-col items-center relative': true,
+            'w-full p-4 bg-gray-200 rounded-xl flex justify-center flex-col items-center relative': true,
             'bg-yellow-200': buttons.room
           }">
           
@@ -184,7 +184,7 @@
         </div>
 
         <div :class="{
-            'w-full h-full bg-gray-200 rounded-xl flex justify-center gap-2 flex-col items-center relative p-2': true,
+            'w-full  bg-gray-200 rounded-xl flex justify-center gap-2 flex-col items-center relative p-2': true,
             'bg-yellow-200': buttons.dinning
           }">
             <div class="relative sm:absolute top-1">Dining room</div>
@@ -248,7 +248,7 @@
             </div>
         </div>
         <div :class="{
-            'w-full h-full bg-gray-200 rounded-xl flex justify-center flex-col gap-2 items-center relative p-2': true,
+            'w-full  bg-gray-200 rounded-xl flex justify-center flex-col gap-2 items-center relative p-2': true,
             'bg-yellow-200': buttons.bathroom
           }">
             <div class="relative top-1">bathroom</div>

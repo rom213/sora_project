@@ -1,47 +1,47 @@
 {% extends 'layout.html' %} {% block title %}{% endblock %} {% block titles
-  %}Login{% endblock %} {% block body %}
-  <main class="flex items-center justify-center min-h-screen bg-[#3e9dfc] p-2 sm:p-8 overflow-hidden">
-    <form method="POST" action="{{ url_for('users.login') }}"
-      class="relative overflow-hidden before:absolute before:left-[-50px] before:top-[-50px] before:rounded-[50%] before:w-[100px] before:h-[100px] before:bg-[#b3d9ff] before:content-[''] after:absolute after:right-[-50px] after:bottom-[-50px] after:rounded-[50%] after:w-[100px] after:h-[100px] after:bg-[#b3d9ff] after:content-[''] w-[500px] min-h-[350px] rounded-[3%] p-3 shadow-xl bg-white"
-      style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.507)">
-  
-      <div class="flex justify-center items-center mt-[20px] mb-8">
-        <h1 class="text-[#4d94ff] text-5xl font-serif">Login</h1>
+%}Login{% endblock %} {% block body %}
+<main
+  class="flex items-center justify-center min-h-screen p-2 sm:p-8 overflow-hidden bg-[url('/static/img/Gemini_Generated_Image_edbygbedbygbedby.jpg')] bg-cover bg-center">
+  <form method="POST" action="{{ url_for('users.login') }}"
+    class="relative overflow-hidden before:absolute before:left-[-50px] before:top-[-50px] before:rounded-[50%] before:w-[100px] before:h-[100px] before:bg-[#b3d9ff] before:content-[''] after:absolute after:right-[-50px] after:bottom-[-50px] after:rounded-[50%] after:w-[100px] after:h-[100px] after:bg-[#b3d9ff] after:content-[''] w-[500px] min-h-[350px] rounded-[3%] p-3 shadow-xl bg-white"
+    style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.507)">
+
+    <div class="flex justify-center items-center mt-[20px] mb-8">
+      <h1 class="text-[#4d94ff] text-5xl font-serif">Login</h1>
+    </div>
+    <div class="flex flex-col gap-2">
+      <div class="grid group gap-1">
+
+        <label for="email" class="text-[#000000a6] pl-3 font-normal hidden group-focus-within:block">Email:</label>
+        <input autocomplete="off" type="email" id="email" name="email" placeholder="Enter Your Email"
+          class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4" required />
       </div>
-      <div class="flex flex-col gap-2">
-        <div class="grid group gap-1">
-  
-          <label for="email"
-            class="text-[#000000a6] pl-3 font-normal hidden group-focus-within:block">Email:</label>
-          <input autocomplete="off" type="email"  id="email" name="email" placeholder="Enter Your Email"
-            class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4" required />
-        </div>
-        <div class="grid group gap-1">
-          <label for="Password"
-            class="text-[#000000a6] pl-3 font-normal hidden group-focus-within:block">Password:</label>
-          <input autocomplete="off" type="password" id="Password" name="password" placeholder="Your Password"
-            class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4" required />
-        </div>
+      <div class="grid group gap-1">
+        <label for="Password"
+          class="text-[#000000a6] pl-3 font-normal hidden group-focus-within:block">Password:</label>
+        <input autocomplete="off" type="password" id="Password" name="password" placeholder="Your Password"
+          class="outline-none bg-[#eaf5ff] text-clip rounded-lg h-12 pl-4" required />
       </div>
-  
-  
-      {% with messages = get_flashed_messages() %} {% if messages %}
-      {% for message in messages %}
-      <div class="pl-2 text-red-500">
-        <strong>{{ message }}</strong>
-      </div>
-      {% endfor %} {% endif %} {% endwith %}
-      <div class="flex justify-center mt-2">
-        <button type="submit"
-          class="bg-[#50a4f8] rounded-lg hover:bg-[#aadbfc] active:scale-95 duration-200 text-white w-[45%] h-12">
-          Sign in
-        </button>
-      </div>
-      <div class="flex justify-center items-center mt-5 space-x-3">
-        <a href="/users/register">Create User</a>
-        <a href="{{url_for('users.reset_request')}}" class="text-[#4d94ff] hover:text-[#3437ff]">Forgot your password?</a>
-      </div>
-    </form>
-  </main>
-  
-  {% endblock %}
+    </div>
+
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    {% for message in messages %}
+    <div class="pl-2 text-red-500">
+      <strong>{{ message }}</strong>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+    <div class="flex justify-center mt-2">
+      <button type="submit"
+        class="bg-[#50a4f8] rounded-lg hover:bg-[#aadbfc] active:scale-95 duration-200 text-white w-[45%] h-12">
+        Sign in
+      </button>
+    </div>
+    <div class="flex justify-center items-center mt-5 space-x-3">
+      <a href="/users/register">Create User</a>
+      <a href="{{url_for('users.reset_request')}}" class="text-[#4d94ff] hover:text-[#3437ff]">Forgot your password?</a>
+    </div>
+  </form>
+</main>
+
+{% endblock %}

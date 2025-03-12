@@ -17,28 +17,45 @@ buttons_state = {
     'dinning': False,
     'bathroom': False,
     'yarn': False,
-    'closeDoor':True
+    'closeDoor':True,
+    'ethernet': False,
+    'ethernet_state':False
 }
+
 
 NODE_SERVER_URL = "http://localhost:5000/update_buttons"
 NODE_SERVER_WS_URL = "ws://localhost:5000"
 
 # Definir socketio globalmente
 socketio = None
+status_ethernet=False
 ws = None
 
 @sokets_bp.route('/update_buttons', methods=['POST'])
 def update_buttons():
     global buttons_state
     buttons_state = request.json
-    print("romario")
 
     emit_status_update()
     return jsonify(buttons_state), 200
 
+@sokets_bp.route('/esp32_update', methods=['POST'])
+def esp32_isconected():
+    if not request.json.get("online"):
+        buttons_state["ethernet"] = False
+
+    buttons_state["ethernet_state"] = request.json.get("online")
+
+
+    emit_status_update();
+    return jsonify(request.json), 200
+
+
+
 def emit_status_update():
     global socketio
     if socketio:
+        print(buttons_state);
         socketio.emit('status_update', buttons_state, namespace='/')
 
 def register_socketio_events(socketio_instance):
