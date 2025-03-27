@@ -20,7 +20,7 @@ class DevelopmentConfig(Config):
     MYSQL_USER = "root"
     MYSQL_PASSWORD = "roma"
     MYSQL_DB = "home"
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}?charset=utf8mb4"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///sora_project.db"
 
     # Aquí defines la carpeta de subida para los avatares
     UPLOAD_FOLDER = os.path.join(
