@@ -16,7 +16,8 @@ home_bp = Blueprint('home', __name__)
 
 # cliente de twlio
 account_sid = 'AC9ce167842853d1b6f468b62470161035'
-auth_token = 'd3b1ee20624ffdeb7ee45b3a3314cd0a'
+
+auth_token = '46b59de450c34e6e60cc337fbbd2954f'
 
 # Inicializa el cliente de Twilio
 client = Client(account_sid, auth_token)
@@ -86,7 +87,6 @@ def call_alarm():
     try:
         # Número de teléfono de Twilio (desde el cual se realiza la llamada)
         from_ = '+12193368792'
-
         # Número de teléfono al que deseas llamar
         to = '+573224668364'
 
@@ -100,7 +100,8 @@ def call_alarm():
             url=url
         )
         return jsonify({'message': 'the call it was posible'}), 200
-    except:
+    except :
+        print("hola es una llamada")
         return jsonify({'message': 'the call it wasnt posible'}), 200
 
 

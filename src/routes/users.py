@@ -230,17 +230,32 @@ def delete_avatar(filename):
 
 def send_email(user):
     token = user.get_token()
-    reset_url = url_for("users.reset_token", token=token, _external=True)
+    reset_url = f'https://www.hogars.site/users/reset_password/{token}'
     msg = Message(
         "Password Reset Request", recipients=[user.email], sender="MAIL_USERNAME"
     )
     
-    msg.body = f"""To reset your password, please follow the link below:{reset_url}
-
-            If you didn't request a password reset, please ignore this email."""
+    msg.html = f"""\
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Password Reset Request</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center;">
+        <div style="max-width: 500px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); margin: auto;">
+            <h2 style="color: #333;">Password Reset Request</h2>
+            <p style="color: #555;">You have requested to reset your password. Click the button below to proceed.</p>
+            <a href="{reset_url}" style="display: inline-block; background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">Reset Password</a>
+            <p style="margin-top: 20px; color: #999; font-size: 14px;">If you did not request a password reset, please ignore this email.</p>
+        </div>
+    </body>
+    </html>
+    """
 
     # Enviar el correo
     mail.send(msg)
+
 
 
 @users_bp.route("/reset_password", methods=["GET", "POST"])
@@ -293,16 +308,27 @@ def reset_token(token):
 
 def send_verification_email(user):
     token = user.get_token()  
-    verification_url = url_for('users.verify_email', token=token, _external=True)
+    verification_url = f'https://www.hogars.site/users/verify_account/{token}'
 
-    msg = Message("Verify your account", recipients=[user.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
-    msg.body = f'''Welcome to our platform,
-
-Please verify your account by clicking the following link:
-{verification_url}
-
-If you did not create this account, please ignore this email.
-'''
+    msg = Message("Verify Your Account", recipients=[user.email], sender=current_app.config['MAIL_DEFAULT_SENDER'])
+    
+    msg.html = f"""\
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Verify Your Account</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; text-align: center;">
+        <div style="max-width: 500px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); margin: auto;">
+            <h2 style="color: #333;">Welcome to Our Platform!</h2>
+            <p style="color: #555;">Please verify your account by clicking the button below:</p>
+            <a href="{verification_url}" style="display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">Verify Account</a>
+            <p style="margin-top: 20px; color: #999; font-size: 14px;">If you did not create this account, please ignore this email.</p>
+        </div>
+    </body>
+    </html>
+    """
 
     mail.send(msg)
 

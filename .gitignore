@@ -17,6 +17,7 @@ instance/
 .history/
 .idea/
 node_modules/
+uploads
 
 # Ignorar archivos de caché de testing
 .pytest_cache/
