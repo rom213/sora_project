@@ -6,12 +6,15 @@ import threading
 import json
 import logging
 
+
+
 sokets_bp = Blueprint('sokets', __name__)
 
 buttons_state = {
     'security': False,
     'opendoor': False,
     'offlights': False,
+    'signal_close_door':False,
     'alarm': False,
     'room': False,
     'dinning': False,
@@ -21,6 +24,14 @@ buttons_state = {
     'ethernet': False,
     'ethernet_state':False
 }
+
+
+@sokets_bp.route('/checkDoor', methods=['POST'])
+def checkDoor():
+    buttons_state["closeDoor"] = request.json.get("closeDoor")
+    emit_status_update();
+    return jsonify({'message': 'funciona'}), 200
+
 
 
 NODE_SERVER_URL = "http://localhost:5000/update_buttons"
@@ -39,16 +50,18 @@ def update_buttons():
     emit_status_update()
     return jsonify(buttons_state), 200
 
-@sokets_bp.route('/esp32_update', methods=['POST'])
+@sokets_bp.route('/check_ethernet', methods=['POST'])
 def esp32_isconected():
     if not request.json.get("online"):
         buttons_state["ethernet"] = False
 
     buttons_state["ethernet_state"] = request.json.get("online")
 
-
-    emit_status_update();
+    emit_status_update()
     return jsonify(request.json), 200
+
+
+
 
 
 
@@ -76,6 +89,15 @@ def register_socketio_events(socketio_instance):
         # Also send update via WebSocket
         if ws:
             ws.send(json.dumps(buttons_state))
+
+    @socketio.on('temperature')
+    def handle_temperature(temperature):
+        print("received temperature= " + str(temperature))
+
+        emit('temperature_flask', str(temperature),broadcast=True)
+
+        
+    
 
     @socketio.on('message')
     def handle_message(message):

@@ -92,6 +92,7 @@
                 const navigate = ref("users");
                 const register_date = ref([]);
                 const showReg=ref(null)
+                const temperature= ref('0')
 
                 const toogleNavigation = (value) => {
                     navigate.value = value;
@@ -102,6 +103,7 @@
                     opendoor: false,
                     offlights: false,
                     alarm: false,
+                    signal_close_door:false,
                     room: false,
                     dinning: false,
                     bathroom: false,
@@ -117,8 +119,11 @@
 
                 socket.on('status_update', (data) => {
                     buttons.value = data;
-                    console.log(data);
                 });
+
+                socket.on('temperature_flask', (data)=>{
+                    temperature.value= data;
+                })
 
                 const tooglebooton = (button) => {
                     buttons.value[button] = !buttons.value[button];
@@ -161,7 +166,8 @@
                     strokSecurityColor,
                     hidenRegister,
                     showRegister,
-                    showReg
+                    showReg, 
+                    temperature
                 };
             }
         };
